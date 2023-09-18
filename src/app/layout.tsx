@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     default: 'GESB 2.0',
     template: '%s | GESB 2.0',
   },
+  icons: {
+    icon: '/icon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
