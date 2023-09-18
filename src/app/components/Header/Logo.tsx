@@ -4,7 +4,7 @@ export function Logo() {
   return (
     <Image
       boxSize="150px"
-      src="https://raw.githubusercontent.com/ppfrezende/GESB2.0/723daaf64497ad7e597febb9056a573757861fcd/frontend/public/logo2.svg"
+      src="https://raw.githubusercontent.com/ppfrezende/app-gesb2/main/public/logo.svg"
       alt="logo"
     />
   )
