@@ -3,7 +3,7 @@
 import { ReactNode, createContext, useEffect, useState } from 'react'
 import { setCookie, parseCookies, destroyCookie } from 'nookies'
 import { api } from '@/services/apiClient'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 type User = {
   id: string
@@ -12,6 +12,7 @@ type User = {
   sector: string
   role: string
   avatar: string
+  created_at: string
 }
 
 type SignInCredentials = {
@@ -40,8 +41,6 @@ export function signOut(byBroadcastChannel = false) {
   if (!byBroadcastChannel) {
     authChannel.postMessage('signOut')
   }
-
-  redirect('/')
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -75,9 +74,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         })
         .catch(() => {
           signOut()
+          router.push('/')
         })
     }
-  }, [token])
+  }, [router, token])
 
   async function signIn({ email, password }: SignInCredentials) {
     try {
@@ -86,8 +86,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
       })
 
-      const { token, refreshToken, id, name, sector, role, avatar } =
-        response.data
+      const {
+        token,
+        refreshToken,
+        id,
+        name,
+        sector,
+        role,
+        avatar,
+        created_at,
+      } = response.data
 
       setCookie(undefined, 'gesb.token', token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -105,6 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         sector,
         role,
         avatar,
+        created_at,
       })
 
       api.defaults.headers.Authorization = `Bearer ${token}`

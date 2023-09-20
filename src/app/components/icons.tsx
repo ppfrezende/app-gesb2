@@ -28,6 +28,12 @@ export {
   RiDeleteBackLine,
   RiUser2Fill,
   RiShieldStarFill,
+  RiRefreshLine,
+  RiArrowLeftLine,
+  RiErrorWarningLine,
+  RiDoorLockLine,
+  RiMailLine,
+  RiMoneyDollarCircleLine,
 } from 'react-icons/ri'
 
 export { FcStatistics, FcBusinessman, FcSalesPerformance } from 'react-icons/fc'

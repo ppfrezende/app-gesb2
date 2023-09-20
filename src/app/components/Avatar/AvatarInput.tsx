@@ -58,7 +58,7 @@ export function AvatarInput({
         >
           <ChakraAvatar
             cursor="pointer"
-            bg="blue.800" /* {colors[Math.floor(Math.random() * colors.length)]} */
+            bg="blue.800"
             color="white"
             size="2xl"
             name={name}

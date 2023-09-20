@@ -1,6 +1,6 @@
 import { api } from '@/services/apiClient'
 
-type User = {
+export type User = {
   id: string
   name: string
   email: string
@@ -43,5 +43,23 @@ export const getUsers = async (page: number): Promise<GetUsersResponse> => {
   return {
     users,
     totalCount,
+  }
+}
+
+export async function getUser(id: string): Promise<User> {
+  const { data } = await api.get(`/users/${id}`)
+
+  return {
+    id: data.user.id,
+    name: data.user.name,
+    email: data.user.email,
+    avatar: data.user.avatar,
+    role: data.user.role,
+    sector: data.user.sector,
+    created_at: new Date(data.user.created_at).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }),
   }
 }

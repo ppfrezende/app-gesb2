@@ -1,6 +1,5 @@
 'use client'
 
-import * as yup from 'yup'
 import {
   useToast,
   useDisclosure,
@@ -16,7 +15,12 @@ import {
   Button,
   Icon,
 } from '@/app/components/chakraui'
-import { RiDeleteBackLine, RiAddLine } from '@/app/components/icons'
+import {
+  RiDeleteBackLine,
+  RiAddLine,
+  RiEdit2Line,
+  RiRefreshLine,
+} from '@/app/components/icons'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from '@/app/components/Form/input'
 import { PositiveButton } from '@/app/components/Buttons/PositiveButton'
@@ -27,17 +31,18 @@ import { dirtyValues } from '@/utils/dirtyValues'
 import { useCallback, useEffect } from 'react'
 import { cepMask, cpfMask, phoneMask, rgMask } from '@/utils/masks'
 import axios from 'axios'
-
-type FormProps = {
-  employeeId?: string
-}
+import { avatarURL } from '@/utils/avatarURL'
+import { updateEmployeeFormSchema } from './schemas/update-employee-form-schema'
+import { registerEmployeeFormSchema } from './schemas/register-employee-form-schema'
+import { AvatarInput } from '@/app/components/Avatar/AvatarInput'
+import { Employee } from './useEmployees'
 
 type EmployeeFormData = {
   name?: string
   cpf?: string
   rg?: string
   email?: string
-  admission_at?: Date
+  admission_at?: Date | string
   phone?: string
   cep?: string
   street?: string
@@ -49,6 +54,11 @@ type EmployeeFormData = {
   salary?: number
 }
 
+type FormProps = {
+  employee?: Employee
+  employeeId?: string
+}
+
 type CepProps = {
   cep: string
   logradouro: string
@@ -58,48 +68,31 @@ type CepProps = {
   uf: string
 }
 
-const employeeFormSchema = yup
-  .object({
-    name: yup.string().required('O nome é obrigatório'),
-    cpf: yup.string().required('O CPF é obrigatório'),
-    rg: yup.string().required('O RG é obrigatório'),
-    email: yup
-      .string()
-      .email('E-mail inválido')
-      .required('O e-mail é obrigatório'),
-    admission_at: yup.date().typeError('A data de admissão é obrigatória'),
-    phone: yup.string().required('O telefone é obrigatório'),
-    cep: yup.string().required('O CEP é obrigatório'),
-    street: yup.string().required('O endereço é obrigatório'),
-    number: yup.string(),
-    complement: yup.string(),
-    city: yup.string().required('A cidade é obrigatória'),
-    uf: yup.string().required('O UF é obrigatório'),
-    salary: yup.number().typeError('O salário é obrigatório'),
-  })
-  .transform((field) => ({
-    name: field.name,
-    cpf: field.cpf,
-    rg: field.rg,
-    email: field.email,
-    admission_at: field.admission_at,
-    phone: field.phone,
-    cep: field.cep,
-    street: field.street,
-    number: field.number,
-    complement: field.complement,
-    city: field.city,
-    uf: field.uf,
-    salary: field.salary,
-  }))
-
-export function EmployeeForm({ employeeId = '' }: FormProps) {
+export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
+  const queryClient = useQueryClient()
 
   const { register, handleSubmit, formState, reset, watch, setValue } = useForm(
     {
-      resolver: yupResolver(employeeFormSchema),
+      mode: 'onBlur',
+      defaultValues: {
+        name: employeeId ? employee?.name : '',
+        cpf: employeeId ? employee?.cpf : '',
+        rg: employeeId ? employee?.rg : '',
+        email: employeeId ? employee?.email : '',
+        phone: employeeId ? employee?.phone : '',
+        cep: employeeId ? employee?.cep : '',
+        street: employeeId ? employee?.street : '',
+        number: employeeId ? employee?.number : '',
+        complement: employeeId ? employee?.complement : '',
+        city: employeeId ? employee?.city : '',
+        uf: employeeId ? employee?.uf : '',
+        salary: employeeId ? employee?.salary : null,
+      },
+      resolver: yupResolver(
+        employeeId ? updateEmployeeFormSchema : registerEmployeeFormSchema,
+      ),
     },
   )
 
@@ -148,8 +141,6 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
   }, [cpf, handleFetchAddress, phone, rg, setValue, zipCode])
 
   const { errors, isValid, isSubmitting } = formState
-
-  const queryClient = useQueryClient()
 
   const updateEmployee = useMutation(
     async ({
@@ -212,7 +203,7 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['employees'] })
+        queryClient.invalidateQueries({ queryKey: ['employee'] })
       },
     },
   )
@@ -271,9 +262,11 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
     <>
       <PositiveButton
         onClick={onOpen}
-        leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+        leftIcon={
+          <Icon as={employeeId ? RiEdit2Line : RiAddLine} fontSize="20" />
+        }
       >
-        Cadastrar
+        {employeeId ? 'Editar' : 'Cadastrar'}
       </PositiveButton>
       <Modal
         size="xl"
@@ -290,7 +283,9 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
             backdropBlur="2px"
           />
           <ModalContent>
-            <ModalHeader>Cadastrar Funcionário</ModalHeader>
+            <ModalHeader>
+              {employeeId ? 'Atualizar' : 'Cadastrar colaborador'}
+            </ModalHeader>
             <ModalCloseButton onClick={closeModalAndReset} />
             <Divider
               alignSelf="center"
@@ -299,6 +294,13 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
               borderColor="gray.500"
             />
             <ModalBody>
+              {employeeId && (
+                <AvatarInput
+                  register={register}
+                  name={employee?.name}
+                  src={avatarURL(employee?.avatar)}
+                />
+              )}
               <Input
                 {...register('name')}
                 name="name"
@@ -331,7 +333,7 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
               <Input
                 {...register('admission_at')}
                 name="admission_at"
-                label="Data de adimissão:"
+                label="Data de admissão:"
                 type="date"
                 error={errors.admission_at}
               />
@@ -404,10 +406,15 @@ export function EmployeeForm({ employeeId = '' }: FormProps) {
                 marginLeft="4"
                 type="submit"
                 isLoading={isSubmitting}
-                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                leftIcon={
+                  <Icon
+                    as={employeeId ? RiRefreshLine : RiAddLine}
+                    fontSize="20"
+                  />
+                }
                 onClick={isValid ? closeModalandAddSuccessToast : toastError}
               >
-                Cadastrar
+                Salvar
               </PositiveButton>
             </ModalFooter>
           </ModalContent>

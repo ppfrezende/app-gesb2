@@ -11,7 +11,7 @@ import {
   Tr,
 } from '@/app/components/chakraui'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import { GetEmployeesResponse, getEmployees } from './getEmployees'
+import { GetEmployeesResponse, getEmployees } from './useEmployees'
 import EmployeesTable from './EmployeesTable'
 import { useState } from 'react'
 import { Pagination } from '@/app/components/Pagination'

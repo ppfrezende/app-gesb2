@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <Flex direction="column" height="100vh">
+    <Flex direction="column">
       <Header />
 
       <Flex

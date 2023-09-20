@@ -65,6 +65,8 @@ export {
   FormControl,
   FormErrorMessage,
   Select,
+  VStack,
+  SimpleGrid,
   Popover,
   PopoverArrow,
   PopoverTrigger,

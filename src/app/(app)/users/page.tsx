@@ -14,7 +14,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { useState } from 'react'
 import { Pagination } from '@/app/components/Pagination'
-import { GetUsersResponse, getUsers } from './getUsers'
+import { GetUsersResponse, getUsers } from './useUsers'
 import UsersTable from './UsersTable'
 import { UserForm } from './UserForm'
 

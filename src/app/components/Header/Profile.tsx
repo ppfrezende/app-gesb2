@@ -15,10 +15,12 @@ import {
   Icon,
   useDisclosure,
 } from '@/app/components/chakraui'
-import { RiUserSettingsLine, RiLogoutCircleLine } from '@/app/components/icons'
+import { RiUserSettingsLine } from '@/app/components/icons'
 import { Avatar } from '@/app/components/Avatar/Avatar'
 import { useContext, useRef } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
+import { LogoutModal } from '../LogoutModal'
+import Link from 'next/link'
 
 export function Profile() {
   const { user } = useContext(AuthContext)
@@ -63,10 +65,14 @@ export function Profile() {
             </Box>
             <Divider marginBottom="2" />
             <ChakraLink
+              as={Link}
+              onClick={() => {
+                setTimeout(onClose, 500)
+              }}
               marginBottom="2"
               display="flex"
               alignItems="center"
-              href="#"
+              href="/me"
             >
               <Icon as={RiUserSettingsLine} fontSize="16" />
               <Text marginLeft="4" fontSize="14">
@@ -74,12 +80,7 @@ export function Profile() {
               </Text>
             </ChakraLink>
             <Divider marginBottom="2" />
-            <ChakraLink display="flex" alignItems="center" href="#">
-              <Icon as={RiLogoutCircleLine} fontSize="16" color="red.500" />
-              <Text marginLeft="4" fontSize="14">
-                Sair
-              </Text>
-            </ChakraLink>
+            <LogoutModal />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

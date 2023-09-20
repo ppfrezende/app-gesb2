@@ -1,6 +1,5 @@
 'use client'
 
-import * as yup from 'yup'
 import {
   useToast,
   useDisclosure,
@@ -24,6 +23,8 @@ import {
   RiAddLine,
   RiEyeOffLine,
   RiEyeLine,
+  RiRefreshLine,
+  RiEdit2Line,
 } from '@/app/components/icons'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from '@/app/components/Form/input'
@@ -34,8 +35,14 @@ import { api } from '@/services/apiClient'
 import { dirtyValues } from '@/utils/dirtyValues'
 import { Select } from '@/app/components/Form/select'
 import { useState } from 'react'
+import { avatarURL } from '@/utils/avatarURL'
+import { AvatarInput } from '@/app/components/Avatar/AvatarInput'
+import { User } from './useUsers'
+import { updateUserFormSchema } from './schemas/update-user-form-schema'
+import { registerUserFormSchema } from './schemas/register-user-form-shema'
 
 type FormProps = {
+  user?: User
   userId?: string
 }
 
@@ -44,38 +51,13 @@ type UserFormData = {
   sector?: string
   email?: string
   role?: string
-  avatar?: string
+  avatar?: FileList
   password?: string
   password_confirmation?: string
 }
 
-const userFormSchema = yup
-  .object({
-    name: yup.string().required('O nome é obrigatório'),
-    sector: yup.string().required('Informar o setor é obrigatório'),
-    email: yup
-      .string()
-      .required('O e-mail é obrigatório')
-      .email('E-mail inválido'),
-    role: yup.string().required('Informar a permissão é obrigatório'),
-    password: yup
-      .string()
-      .required('A senha é obrigatória')
-      .min(6, 'No mínimo 6 caracteres'),
-    password_confirmation: yup
-      .string()
-      .oneOf([undefined, yup.ref('password')], 'As senhas não correspondem'),
-  })
-  .transform((field) => ({
-    name: field.name,
-    sector: field.sector,
-    email: field.email,
-    role: field.role,
-    password: field.password,
-    password_confirmation: field.password_confirmation,
-  }))
-
-export function UserForm({ userId = '' }: FormProps) {
+export function UserForm({ user, userId = '' }: FormProps) {
+  const queryClient = useQueryClient()
   //= =====================================Passoword treatement
 
   const [showPassword, setShowPassword] = useState(false)
@@ -89,12 +71,20 @@ export function UserForm({ userId = '' }: FormProps) {
   const toast = useToast()
 
   const { register, handleSubmit, formState, reset } = useForm({
-    resolver: yupResolver(userFormSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      name: userId ? user?.name : '',
+      email: userId ? user?.email : '',
+      sector: userId ? user?.sector : '',
+      role: userId ? user?.role : '',
+      avatar: userId && avatarURL(user?.avatar),
+    },
+    resolver: yupResolver(
+      userId ? updateUserFormSchema : registerUserFormSchema,
+    ),
   })
 
   const { errors, isValid, isSubmitting } = formState
-
-  const queryClient = useQueryClient()
 
   const updateUser = useMutation(
     async ({
@@ -125,7 +115,7 @@ export function UserForm({ userId = '' }: FormProps) {
           toastError()
         }
       } else {
-        await api.put(`/employees/${userId}`, {
+        await api.put(`/users/${userId}`, {
           name,
           email,
           avatar,
@@ -138,7 +128,7 @@ export function UserForm({ userId = '' }: FormProps) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['users'] })
+        queryClient.invalidateQueries({ queryKey: ['user'] })
       },
     },
   )
@@ -154,7 +144,7 @@ export function UserForm({ userId = '' }: FormProps) {
     },
   )
 
-  const handleCreateEmployee: SubmitHandler<UserFormData> = async (values) => {
+  const handleCreateUser: SubmitHandler<UserFormData> = async (values) => {
     if (userId) {
       const modifiedValues = dirtyValues(formState.dirtyFields, values)
       await updateUser.mutateAsync(modifiedValues)
@@ -195,9 +185,9 @@ export function UserForm({ userId = '' }: FormProps) {
     <>
       <PositiveButton
         onClick={onOpen}
-        leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+        leftIcon={<Icon as={userId ? RiEdit2Line : RiAddLine} fontSize="20" />}
       >
-        Cadastrar
+        {userId ? 'Editar' : 'Cadastrar'}
       </PositiveButton>
       <Modal
         size="xl"
@@ -206,7 +196,7 @@ export function UserForm({ userId = '' }: FormProps) {
         onClose={onClose}
         motionPreset="scale"
       >
-        <Box as="form" onSubmit={handleSubmit(handleCreateEmployee)}>
+        <Box as="form" onSubmit={handleSubmit(handleCreateUser)}>
           <ModalOverlay
             bg="none"
             backdropFilter="auto"
@@ -214,7 +204,9 @@ export function UserForm({ userId = '' }: FormProps) {
             backdropBlur="2px"
           />
           <ModalContent>
-            <ModalHeader>Cadastrar Usuário</ModalHeader>
+            <ModalHeader>
+              {userId ? 'Atualizar' : 'Cadastrar Usuário'}
+            </ModalHeader>
             <ModalCloseButton onClick={closeModalAndReset} />
             <Divider
               alignSelf="center"
@@ -223,6 +215,13 @@ export function UserForm({ userId = '' }: FormProps) {
               borderColor="gray.500"
             />
             <ModalBody>
+              {userId && (
+                <AvatarInput
+                  register={register}
+                  name={user?.name}
+                  src={avatarURL(user?.avatar)}
+                />
+              )}
               <Input
                 {...register('name')}
                 name="name"
@@ -327,10 +326,12 @@ export function UserForm({ userId = '' }: FormProps) {
                 marginLeft="4"
                 type="submit"
                 isLoading={isSubmitting}
-                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                leftIcon={
+                  <Icon as={userId ? RiRefreshLine : RiAddLine} fontSize="20" />
+                }
                 onClick={isValid ? closeModalandAddSuccessToast : toastError}
               >
-                Cadastrar
+                Salvar
               </PositiveButton>
             </ModalFooter>
           </ModalContent>

@@ -1,6 +1,6 @@
 import { api } from '@/services/apiClient'
 
-type Employee = {
+export type Employee = {
   id: string
   name: string
   cpf: string
@@ -66,5 +66,38 @@ export const getEmployees = async (
   return {
     employees,
     totalCount,
+  }
+}
+
+export async function getEmployee(id: string): Promise<Employee> {
+  const { data } = await api.get(`/employees/${id}`)
+
+  return {
+    id: data.employee.id,
+    name: data.employee.name,
+    cpf: data.employee.cpf,
+    rg: data.employee.rg,
+    email: data.employee.email,
+    avatar: data.employee.avatar,
+    phone: data.employee.phone,
+    cep: data.employee.cep,
+    street: data.employee.street,
+    number: data.employee.number,
+    complement: data.employee.complement,
+    city: data.employee.city,
+    uf: data.employee.uf,
+    userEmail: data.employee.userEmail,
+    salary: data.employee.salary.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }),
+    admission_at: new Date(data.employee.admission_at).toLocaleDateString(
+      'pt-BR',
+      {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      },
+    ),
   }
 }

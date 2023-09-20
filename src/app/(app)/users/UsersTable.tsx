@@ -1,9 +1,10 @@
 'use client'
 
 import { Avatar } from '@/app/components/Avatar/Avatar'
+import Link from 'next/link'
 import {
   Box,
-  Link,
+  Link as ChakraLink,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -22,8 +23,8 @@ import {
 import { RiEdit2Line, RiShieldStarFill } from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useState } from 'react'
-import { GetUsersResponse, getUsers } from './getUsers'
-import { supabaseURL } from '@/utils/supabaseURL'
+import { GetUsersResponse, getUsers } from './useUsers'
+import { avatarURL } from '@/utils/avatarURL'
 
 export default function UsersTable() {
   const [page] = useState(1)
@@ -42,7 +43,7 @@ export default function UsersTable() {
               <Checkbox colorScheme="red" borderColor="gray.500" />
             </Td>
             <Td>
-              <Avatar name={user.name} src={`${supabaseURL}${user?.avatar}`}>
+              <Avatar name={user.name} src={avatarURL(user?.avatar)}>
                 {user?.role === 'ADMIN' ? (
                   <AvatarBadge border="none" bg="none">
                     <Icon
@@ -66,11 +67,11 @@ export default function UsersTable() {
               >
                 <PopoverTrigger>
                   <Box>
-                    <Link href={`#`}>
+                    <ChakraLink as={Link} href={`/users/${user.id}`}>
                       <Text fontSize="sm" fontWeight="bold">
                         {user.name}
                       </Text>
-                    </Link>
+                    </ChakraLink>
                     <Text fontSize="sm" color="gray.700">
                       {user.email}
                     </Text>
@@ -83,7 +84,7 @@ export default function UsersTable() {
                     <Avatar
                       size="sm"
                       name={user.name}
-                      src={`${supabaseURL}${user?.avatar}`}
+                      src={avatarURL(user?.avatar)}
                     />
                   </PopoverHeader>
                   <PopoverBody>

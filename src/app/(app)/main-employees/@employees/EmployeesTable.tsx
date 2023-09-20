@@ -3,7 +3,7 @@
 import { Avatar } from '@/app/components/Avatar/Avatar'
 import {
   Box,
-  Link,
+  Link as ChakraLink,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -20,8 +20,10 @@ import {
 } from '@/app/components/chakraui'
 import { RiEdit2Line } from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import { GetEmployeesResponse, getEmployees } from './getEmployees'
+import { GetEmployeesResponse, getEmployees } from './useEmployees'
 import { useState } from 'react'
+import { avatarURL } from '@/utils/avatarURL'
+import Link from 'next/link'
 
 export default function EmployeesTable() {
   const [page] = useState(1)
@@ -40,10 +42,7 @@ export default function EmployeesTable() {
               <Checkbox colorScheme="red" borderColor="gray.500" />
             </Td>
             <Td>
-              <Avatar
-                name={employee.name}
-                // src={`${supabaseURL}${employee?.avatar}`}
-              />
+              <Avatar name={employee.name} src={avatarURL(employee?.avatar)} />
             </Td>
             <Td paddingX="6">
               <Popover
@@ -55,11 +54,14 @@ export default function EmployeesTable() {
               >
                 <PopoverTrigger>
                   <Box>
-                    <Link href={`#`}>
+                    <ChakraLink
+                      as={Link}
+                      href={`/main-employees/${employee.id}`}
+                    >
                       <Text fontSize="sm" fontWeight="bold">
                         {employee.name}
                       </Text>
-                    </Link>
+                    </ChakraLink>
                     <Text fontSize="sm" color="gray.700">
                       {employee.email}
                     </Text>
@@ -72,7 +74,7 @@ export default function EmployeesTable() {
                     <Avatar
                       size="sm"
                       name={employee.name}
-                      // src={`${supabaseURL}${employee?.avatar}`}
+                      src={avatarURL(employee?.avatar)}
                     />
                   </PopoverHeader>
                   <PopoverBody>
