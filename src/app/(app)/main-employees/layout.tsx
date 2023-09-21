@@ -16,6 +16,7 @@ import Loading from './loading'
 type MainEmployeesLayoutProps = {
   children: ReactNode
   employees: ReactNode
+  service_providers: ReactNode
 }
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
 export default function MainEmployeesLayout({
   children,
   employees,
+  service_providers,
 }: MainEmployeesLayoutProps) {
   return (
     <Box
@@ -50,9 +52,8 @@ export default function MainEmployeesLayout({
         <Suspense fallback={<Loading />}>
           <TabPanels marginTop="-1">
             <TabPanel>{employees}</TabPanel>
-            <TabPanel>
-              <h1>ServiceProvider</h1>
-            </TabPanel>
+
+            <TabPanel>{service_providers}</TabPanel>
           </TabPanels>
         </Suspense>
 

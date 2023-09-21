@@ -1,8 +1,8 @@
 import { ReactNode, Suspense } from 'react'
 import { Metadata } from 'next'
 import { Box } from '@/app/components/chakraui'
-import Loading from './loading'
 import { api } from '@/services/apiClient'
+import Loading from '@/app/components/Loading'
 
 type UsersLayoutProps = {
   children: ReactNode
@@ -17,10 +17,10 @@ export async function generateMetadata({
 }: ParamsProps): Promise<Metadata> {
   const id = params.slug
 
-  const { data } = await api.get(`employees/${id}`)
+  const { data } = await api.get(`service-providers/${id}`)
 
   return {
-    title: `${data.employee.name} | GESB 2.0`,
+    title: `${data.service_provider.name} | GESB 2.0`,
   }
 }
 

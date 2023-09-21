@@ -20,29 +20,35 @@ import {
 } from '@/app/components/chakraui'
 import { RiEdit2Line } from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import { GetEmployeesResponse, getEmployees } from './useEmployees'
 import { useState } from 'react'
 import { avatarURL } from '@/utils/avatarURL'
 import Link from 'next/link'
+import {
+  GetServiceProvidersResponse,
+  getServiceProviders,
+} from './useServiceProviders'
 
-export default function EmployeesTable() {
+export default function ServiceProvidersTable() {
   const [page] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['employees', page],
-    queryFn: () => getEmployees(page),
-  }) as UseQueryResult<GetEmployeesResponse, unknown>
+    queryKey: ['service-providers', page],
+    queryFn: () => getServiceProviders(page),
+  }) as UseQueryResult<GetServiceProvidersResponse, unknown>
 
   return (
     <>
-      {data?.employees.map((employee) => {
+      {data?.service_providers.map((service_provider) => {
         return (
-          <Tr key={employee.id}>
+          <Tr key={service_provider.id}>
             <Td paddingX="6">
               <Checkbox colorScheme="red" borderColor="gray.500" />
             </Td>
             <Td>
-              <Avatar name={employee.name} src={avatarURL(employee?.avatar)} />
+              <Avatar
+                name={service_provider.name}
+                src={avatarURL(service_provider?.avatar)}
+              />
             </Td>
             <Td paddingX="6">
               <Popover
@@ -56,14 +62,14 @@ export default function EmployeesTable() {
                   <Box>
                     <ChakraLink
                       as={Link}
-                      href={`workers/employees/${employee.id}`}
+                      href={`workers/service-providers/${service_provider.id}`}
                     >
                       <Text fontSize="sm" fontWeight="bold">
-                        {employee.name}
+                        {service_provider.name}
                       </Text>
                     </ChakraLink>
                     <Text fontSize="sm" color="gray.700">
-                      {employee.email}
+                      {service_provider.email}
                     </Text>
                   </Box>
                 </PopoverTrigger>
@@ -73,26 +79,22 @@ export default function EmployeesTable() {
                   <PopoverHeader textAlign="center">
                     <Avatar
                       size="sm"
-                      name={employee.name}
-                      src={avatarURL(employee?.avatar)}
+                      name={service_provider.name}
+                      src={avatarURL(service_provider?.avatar)}
                     />
                   </PopoverHeader>
                   <PopoverBody>
                     <Text fontSize="sm">
                       <strong>Nome: </strong>
-                      {employee.name}
-                    </Text>
-                    <Text fontSize="sm">
-                      <strong>CPF: </strong>
-                      {employee.cpf}
+                      {service_provider.name}
                     </Text>
                     <Text fontSize="sm">
                       <strong>E-mail: </strong>
-                      {employee.email}
+                      {service_provider.email}
                     </Text>
                     <Text fontSize="sm">
-                      <strong>Data de admissão: </strong>
-                      {employee.admission_at}
+                      <strong>Validade do contrato: </strong>
+                      {service_provider.contract_validity}
                     </Text>
                   </PopoverBody>
                 </PopoverContent>
@@ -102,7 +104,7 @@ export default function EmployeesTable() {
             <Td>
               <Button
                 as="a"
-                href={`workers/employees/${employee.id}`}
+                href={`workers/service-providers/${service_provider.id}`}
                 size="sm"
                 fontSize="sm"
                 fontWeight="normal"

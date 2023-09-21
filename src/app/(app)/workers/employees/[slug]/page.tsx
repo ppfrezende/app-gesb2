@@ -20,9 +20,13 @@ import Link from 'next/link'
 import { Avatar } from '@/app/components/Avatar/Avatar'
 import { avatarURL } from '@/utils/avatarURL'
 import { DeleteModal } from '@/app/components/DeleteModal'
-import { Employee, getEmployee } from '../useEmployees'
-import { EmployeeForm } from '../EmployeeForm'
+
 import { cepMask } from '@/utils/masks'
+import {
+  Employee,
+  getEmployee,
+} from '@/app/(app)/main-employees/@employees/useEmployees'
+import { EmployeeForm } from '@/app/(app)/main-employees/@employees/EmployeeForm'
 
 export default function EmployeePage({ params }: { params: { slug: string } }) {
   const id = params.slug
@@ -33,7 +37,7 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
   }) as UseQueryResult<Employee, unknown>
 
   return (
-    <Box flex="1" borderRadius="8" bg="gray.200" padding="8">
+    <Box borderRadius="8" bg="gray.200" padding="8">
       <Flex flexDirection="row" justifyContent="space-between">
         <ChakraLink as={Link} href={'/main-employees'}>
           <Icon as={RiArrowLeftLine} fontSize="2xl" />
@@ -68,11 +72,21 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
           </Box>
 
           <Box marginLeft="15">
-            <Text fontSize="xl" marginTop="4">
-              <strong>{data?.name}</strong>
-            </Text>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Box>
+                <Text fontSize="xl">
+                  <strong>{data?.name}</strong>
+                </Text>
 
-            <Text fontStyle="italic">FSR</Text>
+                <Text fontStyle="italic">FSR</Text>
+              </Box>
+              <Box textAlign="end">
+                <Text fontSize="10">Data de admissão:</Text>
+                <Text marginTop="2" fontSize="12">
+                  {data?.admission_at}
+                </Text>
+              </Box>
+            </Flex>
 
             <Divider marginTop="4" borderColor="gray.400" />
 
@@ -128,8 +142,9 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
                 <Text fontSize="sm">{data?.salary}</Text>
               </Flex>
             </Flex>
-            <Text marginTop="6" fontSize="10">
-              {data?.admission_at}
+
+            <Text marginTop="2" fontSize="10">
+              {data?.userEmail}
             </Text>
           </Box>
         </Flex>

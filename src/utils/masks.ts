@@ -23,14 +23,11 @@ export function phoneMask(phone: string) {
 }
 
 export function cnpjMask(cnpj: string) {
-  if (cnpj.length !== 11) return
-
-  return cnpj
-    .replace(/\D/g, '')
-    .replace(/(\d{2})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1/$2')
-    .replace(/(\d{4})(\d)/, '$1-$2')
+  if (cnpj) {
+    return cnpj
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+  }
 }
 
 export function cepMask(cep: string) {

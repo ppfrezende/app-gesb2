@@ -29,20 +29,21 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/services/apiClient'
 import { dirtyValues } from '@/utils/dirtyValues'
 import { useCallback, useEffect } from 'react'
-import { cepMask, cpfMask, phoneMask, rgMask } from '@/utils/masks'
+import { cepMask, cnpjMask, cpfMask, phoneMask, rgMask } from '@/utils/masks'
 import axios from 'axios'
 import { avatarURL } from '@/utils/avatarURL'
-import { updateEmployeeFormSchema } from './schemas/update-employee-form-schema'
-import { registerEmployeeFormSchema } from './schemas/register-employee-form-schema'
 import { AvatarInput } from '@/app/components/Avatar/AvatarInput'
-import { Employee } from './useEmployees'
+import { ServiceProvider } from './useServiceProviders'
+import { updateServiceProviderProfileFormSchema } from './schemas/update-service-provider-form-schema'
+import { registerServiceProviderFormSchema } from './schemas/register-service-provider-form-schema'
 
-type EmployeeFormData = {
+type ServiceProviderFormData = {
   name?: string
   cpf?: string
   rg?: string
+  cnpj?: string
   email?: string
-  admission_at?: Date | string
+  contract_validity?: Date
   phone?: string
   cep?: string
   street?: string
@@ -51,12 +52,15 @@ type EmployeeFormData = {
   city?: string
   uf?: string
   avatar?: FileList
-  salary?: number
+  normal_hour?: number
+  extra_hour?: number
+  day_hour?: number
+  contract_value?: number
 }
 
 type FormProps = {
-  employee?: Employee
-  employeeId?: string
+  service_provider?: ServiceProvider
+  serviceProviderId?: string
 }
 
 type CepProps = {
@@ -68,7 +72,10 @@ type CepProps = {
   uf: string
 }
 
-export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
+export function ServiceProviderForm({
+  service_provider,
+  serviceProviderId = '',
+}: FormProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const queryClient = useQueryClient()
@@ -77,27 +84,35 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
     {
       mode: 'onBlur',
       defaultValues: {
-        name: employeeId ? employee?.name : '',
-        cpf: employeeId ? employee?.cpf : '',
-        rg: employeeId ? employee?.rg : '',
-        email: employeeId ? employee?.email : '',
-        phone: employeeId ? employee?.phone : '',
-        cep: employeeId ? employee?.cep : '',
-        street: employeeId ? employee?.street : '',
-        number: employeeId ? employee?.number : '',
-        complement: employeeId ? employee?.complement : '',
-        city: employeeId ? employee?.city : '',
-        uf: employeeId ? employee?.uf : '',
-        salary: employeeId ? employee?.salary : null,
+        name: serviceProviderId ? service_provider?.name : '',
+        cpf: serviceProviderId ? service_provider?.cpf : '',
+        rg: serviceProviderId ? service_provider?.rg : '',
+        email: serviceProviderId ? service_provider?.email : '',
+        phone: serviceProviderId ? service_provider?.phone : '',
+        cep: serviceProviderId ? service_provider?.cep : '',
+        street: serviceProviderId ? service_provider?.street : '',
+        number: serviceProviderId ? service_provider?.number : '',
+        complement: serviceProviderId ? service_provider?.complement : '',
+        city: serviceProviderId ? service_provider?.city : '',
+        uf: serviceProviderId ? service_provider?.uf : '',
+        contract_value: serviceProviderId
+          ? service_provider?.contract_value
+          : null,
+        normal_hour: serviceProviderId ? service_provider?.normal_hour : null,
+        extra_hour: serviceProviderId ? service_provider?.extra_hour : null,
+        day_hour: serviceProviderId ? service_provider?.day_hour : null,
       },
       resolver: yupResolver(
-        employeeId ? updateEmployeeFormSchema : registerEmployeeFormSchema,
+        serviceProviderId
+          ? updateServiceProviderProfileFormSchema
+          : registerServiceProviderFormSchema,
       ),
     },
   )
 
   const zipCode = watch('cep')
   const cpf = watch('cpf')
+  const cnpj = watch('cnpj')
   const rg = watch('rg')
   const phone = watch('phone')
 
@@ -126,6 +141,10 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
       setValue('cpf', cpfMask(cpf))
     }
 
+    if (cnpj?.length === 14) {
+      setValue('cnpj', cnpjMask(cnpj))
+    }
+
     if (phone?.length === 11) {
       setValue('phone', phoneMask(phone))
     }
@@ -138,17 +157,17 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
       setValue('cep', cepMask(zipCode))
       handleFetchAddress(zipCode)
     }
-  }, [cpf, handleFetchAddress, phone, rg, setValue, zipCode])
+  }, [cnpj, cpf, handleFetchAddress, phone, rg, setValue, zipCode])
 
   const { errors, isValid, isSubmitting } = formState
 
-  const updateEmployee = useMutation(
+  const updateServiceProvider = useMutation(
     async ({
       name,
       cpf,
       rg,
       email,
-      admission_at,
+      contract_validity,
       phone,
       cep,
       street,
@@ -157,20 +176,26 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
       city,
       uf,
       avatar,
-      salary,
-    }: EmployeeFormData) => {
+      contract_value,
+      normal_hour,
+      extra_hour,
+      day_hour,
+    }: ServiceProviderFormData) => {
       if (avatar) {
         const file = avatar[0]
         const formDataApi = new FormData()
         formDataApi.append('avatar', file)
         try {
-          await api.patch(`/employees/avatar/${employeeId}`, formDataApi)
-          await api.put(`/employees/${employeeId}`, {
+          await api.patch(
+            `/service-providers/avatar/${serviceProviderId}`,
+            formDataApi,
+          )
+          await api.put(`/providers/${serviceProviderId}`, {
             name,
             cpf,
             rg,
             email,
-            admission_at,
+            contract_validity,
             phone,
             cep,
             street,
@@ -178,18 +203,21 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
             complement,
             city,
             uf,
-            salary,
+            contract_value,
+            normal_hour,
+            extra_hour,
+            day_hour,
           })
         } catch (err) {
           toastError()
         }
       } else {
-        await api.put(`/employees/${employeeId}`, {
+        await api.put(`/service-providers/${serviceProviderId}`, {
           name,
           cpf,
           rg,
           email,
-          admission_at,
+          contract_validity,
           phone,
           cep,
           street,
@@ -197,38 +225,42 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
           complement,
           city,
           uf,
-          salary,
+          avatar,
+          contract_value,
+          normal_hour,
+          extra_hour,
+          day_hour,
         })
       }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['employee'] })
+        queryClient.invalidateQueries({ queryKey: ['service-provider'] })
       },
     },
   )
 
-  const registerEmployee = useMutation(
-    async (employee: EmployeeFormData) => {
-      await api.post('/employees', employee)
+  const registerServiceProvider = useMutation(
+    async (service_provider: ServiceProviderFormData) => {
+      await api.post('/service-providers', service_provider)
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['employees'] })
+        queryClient.invalidateQueries({ queryKey: ['service-providers'] })
       },
     },
   )
 
-  const handleCreateOrUpdateEmployee: SubmitHandler<EmployeeFormData> = async (
-    values,
-  ) => {
-    if (employeeId) {
+  const handleCreateOrUpdateServiceProvider: SubmitHandler<
+    ServiceProviderFormData
+  > = async (values) => {
+    if (serviceProviderId) {
       const modifiedValues = dirtyValues(formState.dirtyFields, values)
-      await updateEmployee.mutateAsync(modifiedValues)
+      await updateServiceProvider.mutateAsync(modifiedValues)
 
       closeModalAndReset()
     } else {
-      await registerEmployee.mutateAsync(values)
+      await registerServiceProvider.mutateAsync(values)
 
       closeModalAndReset()
     }
@@ -242,7 +274,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
   function closeModalandAddSuccessToast() {
     onClose()
     toast({
-      title: 'Funcionário criado com sucesso.',
+      title: 'Colaborador criado com sucesso.',
       status: 'success',
       duration: 3000,
       isClosable: true,
@@ -251,7 +283,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
 
   function toastError() {
     toast({
-      title: 'Erro na criação do funcionário.',
+      title: 'Erro na criação do colaborador.',
       status: 'error',
       duration: 3000,
       isClosable: true,
@@ -263,10 +295,13 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
       <PositiveButton
         onClick={onOpen}
         leftIcon={
-          <Icon as={employeeId ? RiEdit2Line : RiAddLine} fontSize="20" />
+          <Icon
+            as={serviceProviderId ? RiEdit2Line : RiAddLine}
+            fontSize="20"
+          />
         }
       >
-        {employeeId ? 'Editar' : 'Cadastrar'}
+        {serviceProviderId ? 'Editar' : 'Cadastrar'}
       </PositiveButton>
       <Modal
         size="xl"
@@ -275,7 +310,10 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
         onClose={onClose}
         motionPreset="scale"
       >
-        <Box as="form" onSubmit={handleSubmit(handleCreateOrUpdateEmployee)}>
+        <Box
+          as="form"
+          onSubmit={handleSubmit(handleCreateOrUpdateServiceProvider)}
+        >
           <ModalOverlay
             bg="none"
             backdropFilter="auto"
@@ -284,7 +322,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
           />
           <ModalContent>
             <ModalHeader>
-              {employeeId ? 'Atualizar' : 'Cadastrar colaborador'}
+              {serviceProviderId ? 'Atualizar' : 'Cadastrar colaborador'}
             </ModalHeader>
             <ModalCloseButton onClick={closeModalAndReset} />
             <Divider
@@ -294,11 +332,11 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
               borderColor="gray.500"
             />
             <ModalBody>
-              {employeeId && (
+              {serviceProviderId && (
                 <AvatarInput
                   register={register}
-                  name={employee?.name}
-                  src={avatarURL(employee?.avatar)}
+                  name={service_provider?.name}
+                  src={avatarURL(service_provider?.avatar)}
                 />
               )}
               <Input
@@ -323,6 +361,13 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
                 error={errors.rg}
               />
               <Input
+                {...register('cnpj')}
+                maxLength={18}
+                name="cnpj"
+                label="CNPJ:"
+                error={errors.cnpj}
+              />
+              <Input
                 {...register('email')}
                 name="email"
                 placeholder="@tetsistemi.com.br"
@@ -331,11 +376,11 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
                 error={errors.email}
               />
               <Input
-                {...register('admission_at')}
-                name="admission_at"
-                label="Data de admissão:"
+                {...register('contract_validity')}
+                name="contract_validity"
+                label="Validade do contrato:"
                 type="date"
-                error={errors.admission_at}
+                error={errors.contract_validity}
               />
               <Input
                 {...register('phone')}
@@ -383,11 +428,40 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
                 error={errors.uf}
               />
               <Input
-                {...register('salary')}
-                name="salary"
-                label="Salário:"
+                {...register('contract_value', {
+                  valueAsNumber: true,
+                })}
+                name="contract_value"
+                label="Valor do contrato (apenas números):"
                 type="number"
-                error={errors.salary}
+                error={errors.contract_value}
+              />
+              <Input
+                {...register('normal_hour', {
+                  valueAsNumber: true,
+                })}
+                name="normal_hour"
+                label="Hora normal:"
+                type="number"
+                error={errors.normal_hour}
+              />
+              <Input
+                {...register('extra_hour', {
+                  valueAsNumber: true,
+                })}
+                name="extra_hour"
+                label="Hora extra:"
+                type="number"
+                error={errors.extra_hour}
+              />
+              <Input
+                {...register('day_hour', {
+                  valueAsNumber: true,
+                })}
+                name="day_hour"
+                label="Hora dia:"
+                type="number"
+                error={errors.day_hour}
               />
             </ModalBody>
 
@@ -408,7 +482,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
                 isLoading={isSubmitting}
                 leftIcon={
                   <Icon
-                    as={employeeId ? RiRefreshLine : RiAddLine}
+                    as={serviceProviderId ? RiRefreshLine : RiAddLine}
                     fontSize="20"
                   />
                 }
