@@ -1,7 +1,11 @@
+import { Text } from '@/app/components/chakraui'
+
 export default function DashBoard() {
   return (
     <>
-      <h1>Dashboard</h1>
+      <Text fontSize="30" fontWeight="bold">
+        UM DASHBOARD MUITO LEGAL AQUI
+      </Text>
     </>
   )
 }

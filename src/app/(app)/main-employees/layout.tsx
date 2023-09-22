@@ -38,14 +38,14 @@ export default function MainEmployeesLayout({
       paddingX="10"
       flexDirection="column"
     >
-      <Tabs colorScheme="gray" isFitted size="sm" variant="enclosed">
+      <Tabs colorScheme="blackAlpha" isFitted size="sm" variant="enclosed">
         <TabList>
           <Tab>{<Icon as={RiTeamFill} marginRight="4" />}Funcionários CLT</Tab>
           <Tab>{<Icon as={RiTeamLine} marginRight="4" />}Funcionários PJ</Tab>
         </TabList>
         <TabIndicator
           mt="-1.5px"
-          height="2px"
+          height="3px"
           bg="gray.500"
           borderRadius="1px"
         />

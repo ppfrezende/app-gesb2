@@ -44,7 +44,7 @@ export default function MainManagementLayout({
       paddingX="10"
       flexDirection="column"
     >
-      <Tabs colorScheme="gray" isFitted size="sm" variant="enclosed">
+      <Tabs colorScheme="blackAlpha" isFitted size="sm" variant="enclosed">
         <TabList>
           <Tab>{<Icon as={RiHammerFill} marginRight="4" />}Intervenções</Tab>
           <Tab>{<Icon as={RiFile2Fill} marginRight="4" />}P.O`s</Tab>
@@ -52,7 +52,7 @@ export default function MainManagementLayout({
         </TabList>
         <TabIndicator
           mt="-1.5px"
-          height="2px"
+          height="3px"
           bg="gray.500"
           borderRadius="1px"
         />
