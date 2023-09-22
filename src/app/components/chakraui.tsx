@@ -67,6 +67,9 @@ export {
   Select,
   VStack,
   SimpleGrid,
+  Textarea,
+  Switch,
+  UnorderedList,
   Popover,
   PopoverArrow,
   PopoverTrigger,
@@ -83,4 +86,6 @@ export type {
   LinkProps,
   ButtonProps,
   SelectProps,
+  TextareaProps,
+  SwitchProps,
 } from '@chakra-ui/react'

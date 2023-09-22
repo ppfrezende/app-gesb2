@@ -26,7 +26,7 @@ export function SidebarNav() {
         <NavLink icon={RiTeamLine} href="/main-employees">
           Colaboradores
         </NavLink>
-        <NavLink icon={RiCompasses2Line} href="/management">
+        <NavLink icon={RiCompasses2Line} href="/main-management">
           Gerenciamento
         </NavLink>
       </NavSection>

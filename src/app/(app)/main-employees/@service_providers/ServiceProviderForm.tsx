@@ -159,7 +159,7 @@ export function ServiceProviderForm({
     }
   }, [cnpj, cpf, handleFetchAddress, phone, rg, setValue, zipCode])
 
-  const { errors, isValid, isSubmitting } = formState
+  const { errors, isSubmitting } = formState
 
   const updateServiceProvider = useMutation(
     async ({
@@ -208,29 +208,35 @@ export function ServiceProviderForm({
             extra_hour,
             day_hour,
           })
+          closeModalandAddToast(serviceProviderId)
         } catch (err) {
           toastError()
         }
       } else {
-        await api.put(`/service-providers/${serviceProviderId}`, {
-          name,
-          cpf,
-          rg,
-          email,
-          contract_validity,
-          phone,
-          cep,
-          street,
-          number,
-          complement,
-          city,
-          uf,
-          avatar,
-          contract_value,
-          normal_hour,
-          extra_hour,
-          day_hour,
-        })
+        try {
+          await api.put(`/service-providers/${serviceProviderId}`, {
+            name,
+            cpf,
+            rg,
+            email,
+            contract_validity,
+            phone,
+            cep,
+            street,
+            number,
+            complement,
+            city,
+            uf,
+            avatar,
+            contract_value,
+            normal_hour,
+            extra_hour,
+            day_hour,
+          })
+          closeModalandAddToast(serviceProviderId)
+        } catch (err) {
+          toastError()
+        }
       }
     },
     {
@@ -242,7 +248,13 @@ export function ServiceProviderForm({
 
   const registerServiceProvider = useMutation(
     async (service_provider: ServiceProviderFormData) => {
-      await api.post('/service-providers', service_provider)
+      try {
+        await api.post('/service-providers', service_provider)
+
+        closeModalandAddToast()
+      } catch (err) {
+        toastError()
+      }
     },
     {
       onSuccess: () => {
@@ -257,12 +269,8 @@ export function ServiceProviderForm({
     if (serviceProviderId) {
       const modifiedValues = dirtyValues(formState.dirtyFields, values)
       await updateServiceProvider.mutateAsync(modifiedValues)
-
-      closeModalAndReset()
     } else {
       await registerServiceProvider.mutateAsync(values)
-
-      closeModalAndReset()
     }
   }
 
@@ -271,14 +279,23 @@ export function ServiceProviderForm({
     reset()
   }
 
-  function closeModalandAddSuccessToast() {
+  function closeModalandAddToast(id?: string) {
     onClose()
-    toast({
-      title: 'Colaborador criado com sucesso.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    })
+    if (id) {
+      toast({
+        title: 'Colaborador atualizado com sucesso.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+    } else {
+      toast({
+        title: 'Colaborador criado com sucesso.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
   }
 
   function toastError() {
@@ -486,7 +503,6 @@ export function ServiceProviderForm({
                     fontSize="20"
                   />
                 }
-                onClick={isValid ? closeModalandAddSuccessToast : toastError}
               >
                 Salvar
               </PositiveButton>

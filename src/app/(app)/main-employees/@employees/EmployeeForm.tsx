@@ -140,7 +140,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
     }
   }, [cpf, handleFetchAddress, phone, rg, setValue, zipCode])
 
-  const { errors, isValid, isSubmitting } = formState
+  const { errors, isSubmitting } = formState
 
   const updateEmployee = useMutation(
     async ({
@@ -180,25 +180,31 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
             uf,
             salary,
           })
+          closeModalandAddToast(employeeId)
         } catch (err) {
           toastError()
         }
       } else {
-        await api.put(`/employees/${employeeId}`, {
-          name,
-          cpf,
-          rg,
-          email,
-          admission_at,
-          phone,
-          cep,
-          street,
-          number,
-          complement,
-          city,
-          uf,
-          salary,
-        })
+        try {
+          await api.put(`/employees/${employeeId}`, {
+            name,
+            cpf,
+            rg,
+            email,
+            admission_at,
+            phone,
+            cep,
+            street,
+            number,
+            complement,
+            city,
+            uf,
+            salary,
+          })
+          closeModalandAddToast(employeeId)
+        } catch (err) {
+          toastError()
+        }
       }
     },
     {
@@ -210,7 +216,12 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
 
   const registerEmployee = useMutation(
     async (employee: EmployeeFormData) => {
-      await api.post('/employees', employee)
+      try {
+        await api.post('/employees', employee)
+        closeModalandAddToast()
+      } catch (err) {
+        toastError()
+      }
     },
     {
       onSuccess: () => {
@@ -225,12 +236,8 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
     if (employeeId) {
       const modifiedValues = dirtyValues(formState.dirtyFields, values)
       await updateEmployee.mutateAsync(modifiedValues)
-
-      closeModalAndReset()
     } else {
       await registerEmployee.mutateAsync(values)
-
-      closeModalAndReset()
     }
   }
 
@@ -239,14 +246,23 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
     reset()
   }
 
-  function closeModalandAddSuccessToast() {
+  function closeModalandAddToast(id?: string) {
     onClose()
-    toast({
-      title: 'Funcionário criado com sucesso.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    })
+    if (id) {
+      toast({
+        title: 'Funcionário atualizado com sucesso.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+    } else {
+      toast({
+        title: 'Funcionário criado com sucesso.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
   }
 
   function toastError() {
@@ -412,7 +428,6 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
                     fontSize="20"
                   />
                 }
-                onClick={isValid ? closeModalandAddSuccessToast : toastError}
               >
                 Salvar
               </PositiveButton>

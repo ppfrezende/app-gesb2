@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import type { Metadata } from 'next'
 import {
   RiBuilding3Fill,
@@ -12,17 +12,28 @@ import {
   Tab,
   TabIndicator,
   Icon,
+  TabPanel,
+  TabPanels,
 } from '@/app/components/chakraui'
+import Loading from '@/app/components/Loading'
 
-export const metadata: Metadata = {
-  title: 'Dashboard',
+type LayoutProps = {
+  children: ReactNode
+  interventions: ReactNode
+  purchase_orders: ReactNode
+  sites: ReactNode
 }
 
-export default function ManagementLayout({
+export const metadata: Metadata = {
+  title: 'Gerenciamento | GESB 2.0',
+}
+
+export default function MainManagementLayout({
   children,
-}: {
-  children: ReactNode
-}) {
+  interventions,
+  purchase_orders,
+  sites,
+}: LayoutProps) {
   return (
     <Box
       display="flex"
@@ -45,6 +56,13 @@ export default function ManagementLayout({
           bg="gray.500"
           borderRadius="1px"
         />
+        <Suspense fallback={<Loading />}>
+          <TabPanels marginTop="-1">
+            <TabPanel>{interventions}</TabPanel>
+            <TabPanel>{purchase_orders}</TabPanel>
+            <TabPanel>{sites}</TabPanel>
+          </TabPanels>
+        </Suspense>
 
         {children}
       </Tabs>
