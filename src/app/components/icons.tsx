@@ -34,6 +34,7 @@ export {
   RiDoorLockLine,
   RiMailLine,
   RiMoneyDollarCircleLine,
+  RiProfileLine,
 } from 'react-icons/ri'
 
 export { FcStatistics, FcBusinessman, FcSalesPerformance } from 'react-icons/fc'

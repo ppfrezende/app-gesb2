@@ -27,7 +27,7 @@ type MainEmployeesLayoutProps = {
 }
 
 export const metadata: Metadata = {
-  title: 'Colaboradores | GESB 2.0',
+  title: 'Cadastros | GESB 2.0',
 }
 
 export default function RegistrationsLayout({

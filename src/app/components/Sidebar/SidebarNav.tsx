@@ -3,10 +3,10 @@ import { NavSection } from './NavSection'
 import { NavLink } from './NavLink'
 
 import {
-  RiTeamLine,
   RiHome8Line,
   RiParentLine,
   RiCompasses2Line,
+  RiProfileLine,
 } from '@/app/components/icons'
 
 export function SidebarNav() {
@@ -23,8 +23,8 @@ export function SidebarNav() {
 
       <NavSection>
         <Divider borderColor="gray.300" />
-        <NavLink icon={RiTeamLine} href="/main-employees">
-          Colaboradores
+        <NavLink icon={RiProfileLine} href="/registrations">
+          Cadastros
         </NavLink>
         <NavLink icon={RiCompasses2Line} href="/main-management">
           Gerenciamento
