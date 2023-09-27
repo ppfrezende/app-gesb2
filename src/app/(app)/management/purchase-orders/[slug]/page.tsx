@@ -19,6 +19,11 @@ import {
   getPurchaseOrder,
 } from '@/app/(app)/main-management/@purchase_orders/usePurchaseOrders'
 import { PurchaseOrderForm } from '@/app/(app)/main-management/@purchase_orders/PurchaseOrderForm'
+import {
+  GetInterventionsResponse,
+  getInterventions,
+} from '@/app/(app)/main-management/@interventions/useInterventions'
+import { useState } from 'react'
 
 export default function PurchaseOrderPage({
   params,
@@ -26,11 +31,25 @@ export default function PurchaseOrderPage({
   params: { slug: string }
 }) {
   const id = params.slug
+  const [page] = useState(1)
 
   const { data } = useQuery({
     queryKey: ['purchase-order', id],
     queryFn: () => getPurchaseOrder(id),
   }) as UseQueryResult<PurchaseOrder, unknown>
+
+  const { data: interventionsData } = useQuery({
+    queryKey: ['interventions', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
+
+  const purchaseOrderIsLinkedToAnIntervention =
+    interventionsData.interventions.map((intervention) => {
+      if (intervention.purchase_order === data.name) {
+        return true
+      }
+      return false
+    })
 
   return (
     <Box borderRadius="8" bg="gray.200" padding="8">
@@ -44,7 +63,16 @@ export default function PurchaseOrderPage({
             <PurchaseOrderForm purchase_order={data} purchaseOrderId={id} />
           </Box>
 
-          <DeleteModal id={id} url="purchase-orders/" title="P.O." />
+          {purchaseOrderIsLinkedToAnIntervention ? (
+            <DeleteModal
+              isActive={false}
+              id={id}
+              url="purchase-orders/"
+              title="P.O."
+            />
+          ) : (
+            <DeleteModal id={id} url="purchase-orders/" title="P.O." />
+          )}
         </Flex>
       </Flex>
       <VStack marginTop="6" marginBottom="8" justify="center" align="center">

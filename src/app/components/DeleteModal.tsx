@@ -24,12 +24,18 @@ import { useRouter } from 'next/navigation'
 import { api } from '@/services/apiClient'
 
 type DeleteModalProps = {
+  isActive?: boolean
   id: string
   url: string
   title: string
 }
 
-export function DeleteModal({ id, url, title }: DeleteModalProps) {
+export function DeleteModal({
+  isActive = true,
+  id,
+  url,
+  title,
+}: DeleteModalProps) {
   const toast = useToast()
   const router = useRouter()
   const {
@@ -64,6 +70,7 @@ export function DeleteModal({ id, url, title }: DeleteModalProps) {
   return (
     <>
       <NegativeButton
+        isActive={isActive}
         onClick={onDeleteOpen}
         leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
       >
