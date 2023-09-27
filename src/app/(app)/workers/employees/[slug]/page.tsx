@@ -25,8 +25,8 @@ import { cepMask } from '@/utils/masks'
 import {
   Employee,
   getEmployee,
-} from '@/app/(app)/main-employees/@employees/useEmployees'
-import { EmployeeForm } from '@/app/(app)/main-employees/@employees/EmployeeForm'
+} from '@/app/(app)/registrations/@employees/useEmployees'
+import { EmployeeForm } from '@/app/(app)/registrations/@employees/EmployeeForm'
 
 export default function EmployeePage({ params }: { params: { slug: string } }) {
   const id = params.slug

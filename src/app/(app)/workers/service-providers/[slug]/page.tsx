@@ -24,8 +24,8 @@ import { cepMask } from '@/utils/masks'
 import {
   ServiceProvider,
   getServiceProvider,
-} from '@/app/(app)/main-employees/@service_providers/useServiceProviders'
-import { ServiceProviderForm } from '@/app/(app)/main-employees/@service_providers/ServiceProviderForm'
+} from '@/app/(app)/registrations/@service_providers/useServiceProviders'
+import { ServiceProviderForm } from '@/app/(app)/registrations/@service_providers/ServiceProviderForm'
 
 export default function ServiceProviderPage({
   params,

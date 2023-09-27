@@ -14,16 +14,32 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import Link from 'next/link'
 import { DeleteModal } from '@/app/components/DeleteModal'
-import { Site, getSite } from '@/app/(app)/main-management/@sites/useSites'
-import { SiteForm } from '@/app/(app)/main-management/@sites/SiteForm'
+import { Site, getSite } from '@/app/(app)/registrations/@sites/useSites'
+import { SiteForm } from '@/app/(app)/registrations/@sites/SiteForm'
+import { useState } from 'react'
+import {
+  GetInterventionsResponse,
+  getInterventions,
+} from '@/app/(app)/main-management/@interventions/useInterventions'
 
 export default function SitePage({ params }: { params: { slug: string } }) {
   const id = params.slug
+
+  const [page] = useState(1)
 
   const { data } = useQuery({
     queryKey: ['site', id],
     queryFn: () => getSite(id),
   }) as UseQueryResult<Site, unknown>
+
+  const { data: interventionsData } = useQuery({
+    queryKey: ['interventions', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
+
+  const siteIsLinkedToAnIntervention = interventionsData.interventions.some(
+    (intervention) => intervention.site === data.description,
+  )
 
   return (
     <Box borderRadius="8" bg="gray.200" padding="8">
@@ -37,7 +53,17 @@ export default function SitePage({ params }: { params: { slug: string } }) {
             <SiteForm site={data} siteId={id} />
           </Box>
 
-          <DeleteModal id={id} url="sites/" title="Site" />
+          {siteIsLinkedToAnIntervention ? (
+            <DeleteModal
+              isDisable={true}
+              tooltipComment="Esse site está atrelado a uma intervenção"
+              id={id}
+              url="sites/"
+              title="Site"
+            />
+          ) : (
+            <DeleteModal id={id} url="sites/" title="Site" />
+          )}
         </Flex>
       </Flex>
       <VStack marginBottom="8" justify="center" align="center">

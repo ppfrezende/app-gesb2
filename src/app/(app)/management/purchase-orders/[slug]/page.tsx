@@ -17,8 +17,8 @@ import { DeleteModal } from '@/app/components/DeleteModal'
 import {
   PurchaseOrder,
   getPurchaseOrder,
-} from '@/app/(app)/main-management/@purchase_orders/usePurchaseOrders'
-import { PurchaseOrderForm } from '@/app/(app)/main-management/@purchase_orders/PurchaseOrderForm'
+} from '@/app/(app)/registrations/@purchase_orders/usePurchaseOrders'
+import { PurchaseOrderForm } from '@/app/(app)/registrations/@purchase_orders/PurchaseOrderForm'
 import {
   GetInterventionsResponse,
   getInterventions,
@@ -31,6 +31,7 @@ export default function PurchaseOrderPage({
   params: { slug: string }
 }) {
   const id = params.slug
+
   const [page] = useState(1)
 
   const { data } = useQuery({
@@ -44,12 +45,9 @@ export default function PurchaseOrderPage({
   }) as UseQueryResult<GetInterventionsResponse, unknown>
 
   const purchaseOrderIsLinkedToAnIntervention =
-    interventionsData.interventions.map((intervention) => {
-      if (intervention.purchase_order === data.name) {
-        return true
-      }
-      return false
-    })
+    interventionsData.interventions.some(
+      (intervention) => intervention.purchase_order === data.name,
+    )
 
   return (
     <Box borderRadius="8" bg="gray.200" padding="8">
@@ -65,7 +63,8 @@ export default function PurchaseOrderPage({
 
           {purchaseOrderIsLinkedToAnIntervention ? (
             <DeleteModal
-              isActive={false}
+              isDisable={true}
+              tooltipComment="Essa P.O. está atrelada a uma intervenção"
               id={id}
               url="purchase-orders/"
               title="P.O."

@@ -1,6 +1,6 @@
 import { api } from '@/services/apiClient'
-import { PurchaseOrder } from '../@purchase_orders/usePurchaseOrders'
-import { Site } from '../@sites/useSites'
+import { PurchaseOrder } from '@/app/(app)/registrations/@purchase_orders/usePurchaseOrders'
+import { Site } from '../../registrations/@sites/useSites'
 
 export type InterventionsResponse = {
   id: string

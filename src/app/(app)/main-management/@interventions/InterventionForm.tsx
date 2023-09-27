@@ -46,17 +46,17 @@ import { Select } from '@/app/components/Form/select'
 import {
   GetPurchaseOrdersResponse,
   getPurchaseOrders,
-} from '../@purchase_orders/usePurchaseOrders'
+} from '@/app/(app)/registrations/@purchase_orders/usePurchaseOrders'
 import { useState } from 'react'
-import { GetSitesResponse, getSites } from '../@sites/useSites'
+import { GetSitesResponse, getSites } from '../../registrations/@sites/useSites'
 import {
   GetEmployeesResponse,
   getEmployees,
-} from '../../main-employees/@employees/useEmployees'
+} from '@/app/(app)/registrations/@employees/useEmployees'
 import {
   GetServiceProvidersResponse,
   getServiceProviders,
-} from '../../main-employees/@service_providers/useServiceProviders'
+} from '@/app/(app)/registrations/@service_providers/useServiceProviders'
 
 type InterventionFormData = {
   description: string

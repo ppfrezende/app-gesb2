@@ -1,6 +1,11 @@
 import { ReactNode, Suspense } from 'react'
 import type { Metadata } from 'next'
-import { RiTeamFill, RiTeamLine } from '@/app/components/icons'
+import {
+  RiBuilding3Fill,
+  RiFile2Fill,
+  RiTeamFill,
+  RiTeamLine,
+} from '@/app/components/icons'
 import {
   Box,
   Tabs,
@@ -17,16 +22,20 @@ type MainEmployeesLayoutProps = {
   children: ReactNode
   employees: ReactNode
   service_providers: ReactNode
+  purchase_orders: ReactNode
+  sites: ReactNode
 }
 
 export const metadata: Metadata = {
   title: 'Colaboradores | GESB 2.0',
 }
 
-export default function MainEmployeesLayout({
+export default function RegistrationsLayout({
   children,
   employees,
   service_providers,
+  purchase_orders,
+  sites,
 }: MainEmployeesLayoutProps) {
   return (
     <Box
@@ -42,6 +51,8 @@ export default function MainEmployeesLayout({
         <TabList>
           <Tab>{<Icon as={RiTeamFill} marginRight="4" />}Funcionários CLT</Tab>
           <Tab>{<Icon as={RiTeamLine} marginRight="4" />}Funcionários PJ</Tab>
+          <Tab>{<Icon as={RiFile2Fill} marginRight="4" />}P.O`s</Tab>
+          <Tab>{<Icon as={RiBuilding3Fill} marginRight="4" />}Sites</Tab>
         </TabList>
         <TabIndicator
           mt="-1.5px"
@@ -52,8 +63,9 @@ export default function MainEmployeesLayout({
         <Suspense fallback={<Loading />}>
           <TabPanels marginTop="-1">
             <TabPanel>{employees}</TabPanel>
-
             <TabPanel>{service_providers}</TabPanel>
+            <TabPanel>{purchase_orders}</TabPanel>
+            <TabPanel>{sites}</TabPanel>
           </TabPanels>
         </Suspense>
 

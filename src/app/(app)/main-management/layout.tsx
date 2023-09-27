@@ -1,10 +1,6 @@
 import { ReactNode, Suspense } from 'react'
 import type { Metadata } from 'next'
-import {
-  RiBuilding3Fill,
-  RiFile2Fill,
-  RiHammerFill,
-} from '@/app/components/icons'
+import { RiHammerFill } from '@/app/components/icons'
 import {
   Box,
   Tabs,
@@ -20,8 +16,6 @@ import Loading from '@/app/components/Loading'
 type LayoutProps = {
   children: ReactNode
   interventions: ReactNode
-  purchase_orders: ReactNode
-  sites: ReactNode
 }
 
 export const metadata: Metadata = {
@@ -31,8 +25,6 @@ export const metadata: Metadata = {
 export default function MainManagementLayout({
   children,
   interventions,
-  purchase_orders,
-  sites,
 }: LayoutProps) {
   return (
     <Box
@@ -47,8 +39,6 @@ export default function MainManagementLayout({
       <Tabs colorScheme="blackAlpha" isFitted size="sm" variant="enclosed">
         <TabList>
           <Tab>{<Icon as={RiHammerFill} marginRight="4" />}Intervenções</Tab>
-          <Tab>{<Icon as={RiFile2Fill} marginRight="4" />}P.O`s</Tab>
-          <Tab>{<Icon as={RiBuilding3Fill} marginRight="4" />}Sites</Tab>
         </TabList>
         <TabIndicator
           mt="-1.5px"
@@ -59,8 +49,6 @@ export default function MainManagementLayout({
         <Suspense fallback={<Loading />}>
           <TabPanels marginTop="-1">
             <TabPanel>{interventions}</TabPanel>
-            <TabPanel>{purchase_orders}</TabPanel>
-            <TabPanel>{sites}</TabPanel>
           </TabPanels>
         </Suspense>
 
