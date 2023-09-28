@@ -52,7 +52,7 @@ export default function PurchaseOrderPage({
   return (
     <Box borderRadius="8" bg="gray.200" padding="8">
       <Flex flexDirection="row" justifyContent="space-between">
-        <ChakraLink as={Link} href={'/main-management'}>
+        <ChakraLink as={Link} href={'/registrations'}>
           <Icon as={RiArrowLeftLine} fontSize="2xl" />
         </ChakraLink>
 
