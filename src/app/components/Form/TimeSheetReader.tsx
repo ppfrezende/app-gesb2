@@ -1,14 +1,34 @@
 'use client'
 
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import {
+  Box,
+  Button,
+  Divider,
   Flex,
-  Input,
-  ListItem,
+  Icon,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
+  Table,
+  Tbody,
+  Td,
   Text,
-  UnorderedList,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
 } from '@/app/components/chakraui'
+import { RiAddLine, RiDeleteBackLine, RiEyeFill } from '@/app/components/icons'
 import * as XLSX from 'xlsx'
+import { InputHour } from './inputHour'
+import { serialNumberToDate } from '@/utils/serialNumberToDate'
+import { convertDecimalToHour } from '@/utils/convertDecimalToHour'
+import { PositiveButton } from '../Buttons/PositiveButton'
+import { FileUploader } from './fileUploader'
 
 type TimeSheetData = {
   __EMPTY_1: number // Date
@@ -30,14 +50,7 @@ type TimeSheetData = {
 
 export function TimeSheetReader() {
   const [fileData, setFileData] = useState([])
-
-  function serialNumberToDate(serialNumber: number) {
-    const baseDate = new Date(1900, 0, 1)
-    const milliseconds = (serialNumber - 1) * 24 * 60 * 60 * 1000
-    const date = new Date(baseDate.getTime() + milliseconds)
-
-    return date
-  }
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const handleTimeSheetUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
@@ -61,92 +74,385 @@ export function TimeSheetReader() {
     }
   }
 
-  function convertDecimalToHour(decimal: number) {
-    const hoursInDay = 24
-    const hours = decimal * hoursInDay
-    const hourFloor = Math.floor(hours)
-    const minutes = (hours - hourFloor) * 60
+  const { register, handleSubmit, formState, setValue, getValues } = useForm({
+    mode: 'onChange',
+  })
 
-    const formattedHour = `${hourFloor}:${minutes.toFixed(0).padStart(2, '0')}`
+  const { isSubmitting } = formState
 
-    return formattedHour
+  const handleCreateOrUpdateTimeSheet: SubmitHandler<unknown> = async (
+    values,
+  ) => {
+    console.log(values)
   }
 
-  return (
-    <Flex flexDirection="column">
-      <Input type="file" accept=".xls,.xlsx" onChange={handleTimeSheetUpload} />
+  function closeModalAndReset() {
+    onClose()
+    setFileData([])
+  }
 
-      <UnorderedList>
-        {fileData?.map((item: TimeSheetData, index) => (
-          <ListItem
-            key={index}
-            display="flex"
-            flexDirection="row"
-            marginBottom="2"
-            justifyContent="space-between"
-            fontSize="14"
-          >
-            {serialNumberToDate(item.__EMPTY_1).toLocaleDateString()}
-            <Flex flexDirection="column" justifyContent="center">
-              <Text>
-                Partida:{' '}
-                {item.__EMPTY_3 ? convertDecimalToHour(item.__EMPTY_3) : null}
-              </Text>
-              <Text>
-                Chegada:{' '}
-                {item.__EMPTY_5 ? convertDecimalToHour(item.__EMPTY_5) : null}
-              </Text>
-            </Flex>
-            <Flex flexDirection="column" justifyContent="center">
-              <h1>RANGE A:</h1>
-              <Text>
-                {' '}
-                from:{' '}
-                {item.__EMPTY_7 ? convertDecimalToHour(item.__EMPTY_7) : null}
-              </Text>
-              <Text>
-                {' '}
-                to:{' '}
-                {item.__EMPTY_8 ? convertDecimalToHour(item.__EMPTY_8) : null}
-              </Text>
-            </Flex>
-            <Flex flexDirection="column" justifyContent="center">
-              <h1>RANGE B:</h1>
-              <Text>
-                from:{' '}
-                {item.__EMPTY_10 ? convertDecimalToHour(item.__EMPTY_10) : null}
-              </Text>
-              <Text>
-                to:{' '}
-                {item.__EMPTY_12 ? convertDecimalToHour(item.__EMPTY_12) : null}
-              </Text>
-            </Flex>
-            <Flex flexDirection="column" justifyContent="center">
-              <h1>RANGE C:</h1>
-              <Text>
-                from:{' '}
-                {item.__EMPTY_13 ? convertDecimalToHour(item.__EMPTY_13) : null}
-              </Text>
-              <Text>
-                to:{' '}
-                {item.__EMPTY_14 ? convertDecimalToHour(item.__EMPTY_14) : null}
-              </Text>
-            </Flex>
-            <Flex flexDirection="column" justifyContent="center">
-              <h1>RANGE D:</h1>
-              <Text>
-                from:{' '}
-                {item.__EMPTY_15 ? convertDecimalToHour(item.__EMPTY_15) : null}
-              </Text>
-              <Text>
-                {' '}
-                to:{' '}
-                {item.__EMPTY_17 ? convertDecimalToHour(item.__EMPTY_17) : null}
-              </Text>
-            </Flex>
-          </ListItem>
-        ))}
-      </UnorderedList>
+  useEffect(() => {
+    fileData &&
+      fileData?.forEach((item: TimeSheetData, index) => {
+        item.__EMPTY_3
+          ? setValue(
+              `departure.${index}.__EMPTY_3`,
+              convertDecimalToHour(item.__EMPTY_3),
+            )
+          : setValue(`departure.${index}.__EMPTY_3`, convertDecimalToHour(0))
+        item.__EMPTY_5
+          ? setValue(
+              `arrival.${index}.__EMPTY_5`,
+              convertDecimalToHour(item.__EMPTY_5),
+            )
+          : setValue(`arrival.${index}.__EMPTY_5`, convertDecimalToHour(0))
+        item.__EMPTY_7
+          ? setValue(
+              `rangeAfrom.${index}.__EMPTY_7`,
+              convertDecimalToHour(item.__EMPTY_7),
+            )
+          : setValue(`rangeAfrom.${index}.__EMPTY_7`, convertDecimalToHour(0))
+        item.__EMPTY_8
+          ? setValue(
+              `rangeAto.${index}.__EMPTY_8`,
+              convertDecimalToHour(item.__EMPTY_8),
+            )
+          : setValue(`rangeAto.${index}.__EMPTY_8`, convertDecimalToHour(0))
+        item.__EMPTY_10
+          ? setValue(
+              `rangeBfrom.${index}.__EMPTY_10`,
+              convertDecimalToHour(item.__EMPTY_10),
+            )
+          : setValue(`rangeBfrom.${index}.__EMPTY_10`, convertDecimalToHour(0))
+        item.__EMPTY_12
+          ? setValue(
+              `rangeBto.${index}.__EMPTY_12`,
+              convertDecimalToHour(item.__EMPTY_12),
+            )
+          : setValue(`rangeBto.${index}.__EMPTY_12`, convertDecimalToHour(0))
+        item.__EMPTY_13
+          ? setValue(
+              `rangeCfrom.${index}.__EMPTY_13`,
+              convertDecimalToHour(item.__EMPTY_13),
+            )
+          : setValue(`rangeCfrom.${index}.__EMPTY_13`, convertDecimalToHour(0))
+        item.__EMPTY_14
+          ? setValue(
+              `rangeCto.${index}.__EMPTY_14`,
+              convertDecimalToHour(item.__EMPTY_14),
+            )
+          : setValue(`rangeCto.${index}.__EMPTY_14`, convertDecimalToHour(0))
+        item.__EMPTY_15
+          ? setValue(
+              `rangeDfrom.${index}.__EMPTY_15`,
+              convertDecimalToHour(item.__EMPTY_15),
+            )
+          : setValue(`rangeDfrom.${index}.__EMPTY_15`, convertDecimalToHour(0))
+        item.__EMPTY_17
+          ? setValue(
+              `rangeDto.${index}.__EMPTY_17`,
+              convertDecimalToHour(item.__EMPTY_17),
+            )
+          : setValue(`rangeDto.${index}.__EMPTY_17`, convertDecimalToHour(0))
+      })
+  }, [fileData, setValue])
+
+  return (
+    <Flex flexDirection="column" alignItems="center">
+      <FileUploader onChange={handleTimeSheetUpload} />
+      <PositiveButton onClick={onOpen} marginTop="2">
+        <Icon as={RiEyeFill} fontSize="20" marginRight="2" />
+        Visualizar TimeSheet
+      </PositiveButton>
+
+      {fileData && fileData?.length !== 0 ? (
+        <Modal
+          size="6xl"
+          blockScrollOnMount={false}
+          isOpen={isOpen}
+          onClose={onClose}
+          motionPreset="scale"
+        >
+          <Box as="form" onSubmit={handleSubmit(handleCreateOrUpdateTimeSheet)}>
+            <ModalOverlay
+              bg="none"
+              backdropFilter="auto"
+              backdropInvert="55%"
+              backdropBlur="2px"
+            />
+            <ModalContent>
+              <ModalBody>
+                <Table variant="simple" width="full">
+                  <Thead>
+                    <Tr>
+                      <Th>Dia</Th>
+                      <Th>Travel</Th>
+                      <Th>Range A</Th>
+                      <Th>Range B</Th>
+                      <Th>Range C</Th>
+                      <Th>Range D</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {fileData?.map((item: TimeSheetData, index) => (
+                      <Tr key={index} fontSize="12">
+                        <Td
+                          maxWidth="12"
+                          borderRight="1px"
+                          borderRightColor="gray.200"
+                        >
+                          <Text>
+                            {serialNumberToDate(
+                              item.__EMPTY_1,
+                            ).toLocaleDateString()}
+                          </Text>
+                        </Td>
+                        <Td
+                          maxWidth="12"
+                          borderRight="1px"
+                          borderRightColor="gray.200"
+                        >
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <Text>Partida: </Text>
+                            <Box>
+                              <InputHour
+                                {...register(`departure.${index}.__EMPTY_3`)}
+                                name={`departure.${index}.__EMPTY_3`}
+                                color={
+                                  getValues(`departure.${index}.__EMPTY_3`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                          <Divider borderColor="gray.300" />
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>Chegada: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`arrival.${index}.__EMPTY_5`)}
+                                name={`arrival.${index}.__EMPTY_5`}
+                                color={
+                                  getValues(`arrival.${index}.__EMPTY_5`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                        </Td>
+                        <Td
+                          maxWidth="12"
+                          borderRight="1px"
+                          borderRightColor="gray.200"
+                        >
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>de: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeAfrom.${index}.__EMPTY_7`)}
+                                name={`rangeAfrom.${index}.__EMPTY_7`}
+                                color={
+                                  getValues(`rangeAfrom.${index}.__EMPTY_7`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                          <Divider borderColor="gray.300" />
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>até: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeAto.${index}.__EMPTY_8`)}
+                                name={`rangeAto.${index}.__EMPTY_8`}
+                                color={
+                                  getValues(`rangeAto.${index}.__EMPTY_8`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                        </Td>
+
+                        <Td
+                          maxWidth="12"
+                          borderRight="1px"
+                          borderRightColor="gray.200"
+                        >
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>de: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeBfrom.${index}.__EMPTY_10`)}
+                                name={`rangeBfrom.${index}.__EMPTY_10`}
+                                color={
+                                  getValues(
+                                    `rangeBfrom.${index}.__EMPTY_10`,
+                                  ) === '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                          <Divider borderColor="gray.300" />
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>até: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeBto.${index}.__EMPTY_12`)}
+                                name={`rangeBto.${index}.__EMPTY_12`}
+                                color={
+                                  getValues(`rangeBto.${index}.__EMPTY_12`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                        </Td>
+                        <Td
+                          maxWidth="12"
+                          borderRight="1px"
+                          borderRightColor="gray.200"
+                        >
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>de: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeCfrom.${index}.__EMPTY_13`)}
+                                name={`rangeCfrom.${index}.__EMPTY_13`}
+                                color={
+                                  getValues(
+                                    `rangeCfrom.${index}.__EMPTY_13`,
+                                  ) === '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                          <Divider borderColor="gray.300" />
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>até: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeCto.${index}.__EMPTY_14`)}
+                                name={`rangeCto.${index}.__EMPTY_14`}
+                                color={
+                                  getValues(`rangeCto.${index}.__EMPTY_14`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                        </Td>
+                        <Td>
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>de: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeDfrom.${index}.__EMPTY_15`)}
+                                name={`rangeDfrom.${index}.__EMPTY_15`}
+                                color={
+                                  getValues(
+                                    `rangeDfrom.${index}.__EMPTY_15`,
+                                  ) === '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                          <Divider borderColor="gray.300" />
+                          <Flex
+                            flexDirection="row"
+                            justifyContent="space-between"
+                          >
+                            <h1>até: </h1>
+                            <Box>
+                              <InputHour
+                                {...register(`rangeDto.${index}.__EMPTY_17`)}
+                                name={`rangeDto.${index}.__EMPTY_17`}
+                                color={
+                                  getValues(`rangeDto.${index}.__EMPTY_17`) ===
+                                  '0:00h'
+                                    ? 'gray.400'
+                                    : 'gray.800'
+                                }
+                              />
+                            </Box>
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  onClick={closeModalAndReset}
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="gray"
+                  cursor="pointer"
+                  leftIcon={<Icon as={RiDeleteBackLine} fontSize="20" />}
+                >
+                  Cancelar
+                </Button>
+                <PositiveButton
+                  marginLeft="4"
+                  type="submit"
+                  isLoading={isSubmitting}
+                  leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                >
+                  Salvar
+                </PositiveButton>
+              </ModalFooter>
+            </ModalContent>
+          </Box>
+        </Modal>
+      ) : (
+        <></>
+      )}
     </Flex>
   )
 }

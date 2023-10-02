@@ -83,6 +83,7 @@ export {
 } from '@chakra-ui/react'
 
 export type {
+  InputProps,
   AvatarProps,
   LinkProps,
   ButtonProps,
