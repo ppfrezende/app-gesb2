@@ -6,7 +6,9 @@ import {
   Input,
   InputProps as ChakraInputProps,
   Text,
+  Icon,
 } from '@/app/components/chakraui'
+import { RiFileExcel2Line } from 'react-icons/ri'
 
 interface FileUploaderProps extends ChakraInputProps {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => unknown
@@ -40,12 +42,14 @@ export function FileUploader({ onChange }: FileUploaderProps) {
       />
       <Button
         onClick={handleButtonClick}
-        bg="blue.800"
-        size="sm"
-        color="white"
-        _hover={{ bg: 'blue.900' }}
+        bg="none"
+        size="lg"
+        color="gray.800"
+        _hover={{
+          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+        }}
         _active={{
-          bg: 'blue.900',
+          bg: 'gray.300',
           transform: 'scale(0.98)',
           borderColor: '#bec3c9',
         }}
@@ -53,10 +57,11 @@ export function FileUploader({ onChange }: FileUploaderProps) {
           boxShadow: '0 0 1px 2px red.600, 0 1px 1px rgba(0, 0, 0, .15)',
         }}
       >
-        Carregar Arquivo
+        <Icon as={RiFileExcel2Line} fontSize="25px" marginRight="2" />
+        <Text>Importar TimeSheet</Text>
       </Button>
       {fileName && (
-        <Text fontSize="12" mt={2}>
+        <Text marginLeft="4" fontSize="12" mt={2}>
           {fileName}
         </Text>
       )}

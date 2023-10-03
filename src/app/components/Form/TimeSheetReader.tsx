@@ -8,6 +8,7 @@ import {
   Divider,
   Flex,
   Icon,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -22,7 +23,11 @@ import {
   Tr,
   useDisclosure,
 } from '@/app/components/chakraui'
-import { RiAddLine, RiDeleteBackLine, RiEyeFill } from '@/app/components/icons'
+import {
+  RiAddLine,
+  RiDeleteBackLine,
+  RiFileExcel2Line,
+} from '@/app/components/icons'
 import * as XLSX from 'xlsx'
 import { InputHour } from './inputHour'
 import { serialNumberToDate } from '@/utils/serialNumberToDate'
@@ -94,6 +99,12 @@ export function TimeSheetReader() {
   useEffect(() => {
     fileData &&
       fileData?.forEach((item: TimeSheetData, index) => {
+        item.__EMPTY_1 &&
+          setValue(
+            `date.${index}.__EMPTY_1`,
+            serialNumberToDate(item.__EMPTY_1).toLocaleDateString(),
+          )
+
         item.__EMPTY_3
           ? setValue(
               `departure.${index}.__EMPTY_3`,
@@ -159,300 +170,335 @@ export function TimeSheetReader() {
 
   return (
     <Flex flexDirection="column" alignItems="center">
-      <FileUploader onChange={handleTimeSheetUpload} />
-      <PositiveButton onClick={onOpen} marginTop="2">
-        <Icon as={RiEyeFill} fontSize="20" marginRight="2" />
-        Visualizar TimeSheet
-      </PositiveButton>
+      <Button
+        onClick={onOpen}
+        marginTop="2"
+        transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+        px="8px"
+        borderRadius="6"
+        fontSize="14px"
+        fontWeight="normal"
+        bg="gray.700"
+        size="sm"
+        color="white"
+        _hover={{ bg: 'gray.900' }}
+        _active={{
+          bg: 'gray.900',
+          transform: 'scale(0.98)',
+          borderColor: '#bec3c9',
+        }}
+        _focus={{
+          boxShadow: '0 0 1px 2px red.600, 0 1px 1px rgba(0, 0, 0, .15)',
+        }}
+      >
+        <Icon as={RiFileExcel2Line} fontSize="20" marginRight="2" />
+        Importar TimeSheet
+      </Button>
 
-      {fileData && fileData?.length !== 0 ? (
-        <Modal
-          size="6xl"
-          blockScrollOnMount={false}
-          isOpen={isOpen}
-          onClose={onClose}
-          motionPreset="scale"
-        >
-          <Box as="form" onSubmit={handleSubmit(handleCreateOrUpdateTimeSheet)}>
-            <ModalOverlay
-              bg="none"
-              backdropFilter="auto"
-              backdropInvert="55%"
-              backdropBlur="2px"
-            />
-            <ModalContent>
-              <ModalBody>
-                <Table variant="simple" width="full">
-                  <Thead>
-                    <Tr>
-                      <Th>Dia</Th>
-                      <Th>Travel</Th>
-                      <Th>Range A</Th>
-                      <Th>Range B</Th>
-                      <Th>Range C</Th>
-                      <Th>Range D</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {fileData?.map((item: TimeSheetData, index) => (
-                      <Tr key={index} fontSize="12">
-                        <Td
-                          maxWidth="12"
-                          borderRight="1px"
-                          borderRightColor="gray.200"
-                        >
-                          <Text>
-                            {serialNumberToDate(
-                              item.__EMPTY_1,
-                            ).toLocaleDateString()}
-                          </Text>
-                        </Td>
-                        <Td
-                          maxWidth="12"
-                          borderRight="1px"
-                          borderRightColor="gray.200"
-                        >
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <Text>Partida: </Text>
-                            <Box>
-                              <InputHour
-                                {...register(`departure.${index}.__EMPTY_3`)}
-                                name={`departure.${index}.__EMPTY_3`}
-                                color={
-                                  getValues(`departure.${index}.__EMPTY_3`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                          <Divider borderColor="gray.300" />
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>Chegada: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`arrival.${index}.__EMPTY_5`)}
-                                name={`arrival.${index}.__EMPTY_5`}
-                                color={
-                                  getValues(`arrival.${index}.__EMPTY_5`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                        </Td>
-                        <Td
-                          maxWidth="12"
-                          borderRight="1px"
-                          borderRightColor="gray.200"
-                        >
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>de: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeAfrom.${index}.__EMPTY_7`)}
-                                name={`rangeAfrom.${index}.__EMPTY_7`}
-                                color={
-                                  getValues(`rangeAfrom.${index}.__EMPTY_7`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                          <Divider borderColor="gray.300" />
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>até: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeAto.${index}.__EMPTY_8`)}
-                                name={`rangeAto.${index}.__EMPTY_8`}
-                                color={
-                                  getValues(`rangeAto.${index}.__EMPTY_8`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                        </Td>
-
-                        <Td
-                          maxWidth="12"
-                          borderRight="1px"
-                          borderRightColor="gray.200"
-                        >
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>de: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeBfrom.${index}.__EMPTY_10`)}
-                                name={`rangeBfrom.${index}.__EMPTY_10`}
-                                color={
-                                  getValues(
-                                    `rangeBfrom.${index}.__EMPTY_10`,
-                                  ) === '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                          <Divider borderColor="gray.300" />
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>até: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeBto.${index}.__EMPTY_12`)}
-                                name={`rangeBto.${index}.__EMPTY_12`}
-                                color={
-                                  getValues(`rangeBto.${index}.__EMPTY_12`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                        </Td>
-                        <Td
-                          maxWidth="12"
-                          borderRight="1px"
-                          borderRightColor="gray.200"
-                        >
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>de: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeCfrom.${index}.__EMPTY_13`)}
-                                name={`rangeCfrom.${index}.__EMPTY_13`}
-                                color={
-                                  getValues(
-                                    `rangeCfrom.${index}.__EMPTY_13`,
-                                  ) === '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                          <Divider borderColor="gray.300" />
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>até: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeCto.${index}.__EMPTY_14`)}
-                                name={`rangeCto.${index}.__EMPTY_14`}
-                                color={
-                                  getValues(`rangeCto.${index}.__EMPTY_14`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                        </Td>
-                        <Td>
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>de: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeDfrom.${index}.__EMPTY_15`)}
-                                name={`rangeDfrom.${index}.__EMPTY_15`}
-                                color={
-                                  getValues(
-                                    `rangeDfrom.${index}.__EMPTY_15`,
-                                  ) === '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                          <Divider borderColor="gray.300" />
-                          <Flex
-                            flexDirection="row"
-                            justifyContent="space-between"
-                          >
-                            <h1>até: </h1>
-                            <Box>
-                              <InputHour
-                                {...register(`rangeDto.${index}.__EMPTY_17`)}
-                                name={`rangeDto.${index}.__EMPTY_17`}
-                                color={
-                                  getValues(`rangeDto.${index}.__EMPTY_17`) ===
-                                  '0:00h'
-                                    ? 'gray.400'
-                                    : 'gray.800'
-                                }
-                              />
-                            </Box>
-                          </Flex>
-                        </Td>
+      <Modal
+        size="6xl"
+        blockScrollOnMount={false}
+        isOpen={isOpen}
+        onClose={onClose}
+        motionPreset="scale"
+      >
+        <Box as="form" onSubmit={handleSubmit(handleCreateOrUpdateTimeSheet)}>
+          <ModalOverlay
+            bg="none"
+            backdropFilter="auto"
+            backdropInvert="55%"
+            backdropBlur="2px"
+          />
+          <ModalContent>
+            <FileUploader onChange={handleTimeSheetUpload} />
+            {fileData && fileData?.length !== 0 ? (
+              <>
+                <ModalBody>
+                  <Table variant="simple" width="full">
+                    <Thead>
+                      <Tr>
+                        <Th>Dia</Th>
+                        <Th>Travel</Th>
+                        <Th>Range A</Th>
+                        <Th>Range B</Th>
+                        <Th>Range C</Th>
+                        <Th>Range D</Th>
                       </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onClick={closeModalAndReset}
-                  size="sm"
-                  fontSize="sm"
-                  colorScheme="gray"
-                  cursor="pointer"
-                  leftIcon={<Icon as={RiDeleteBackLine} fontSize="20" />}
-                >
-                  Cancelar
-                </Button>
-                <PositiveButton
-                  marginLeft="4"
-                  type="submit"
-                  isLoading={isSubmitting}
-                  leftIcon={<Icon as={RiAddLine} fontSize="20" />}
-                >
-                  Salvar
-                </PositiveButton>
-              </ModalFooter>
-            </ModalContent>
-          </Box>
-        </Modal>
-      ) : (
-        <></>
-      )}
+                    </Thead>
+                    <Tbody>
+                      {fileData?.map((item: TimeSheetData, index) => (
+                        <Tr key={index} fontSize="12">
+                          <Td
+                            maxWidth="12"
+                            borderRight="1px"
+                            borderRightColor="gray.200"
+                          >
+                            <Input
+                              isReadOnly={true}
+                              {...register(`date.${index}.__EMPTY_1`)}
+                              name={`date.${index}.__EMPTY_1`}
+                              border="none"
+                              size="12"
+                            />
+                          </Td>
+                          <Td
+                            maxWidth="12"
+                            borderRight="1px"
+                            borderRightColor="gray.200"
+                          >
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <Text>Partida: </Text>
+                              <Box>
+                                <InputHour
+                                  {...register(`departure.${index}.__EMPTY_3`)}
+                                  name={`departure.${index}.__EMPTY_3`}
+                                  color={
+                                    getValues(
+                                      `departure.${index}.__EMPTY_3`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                            <Divider borderColor="gray.300" />
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>Chegada: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(`arrival.${index}.__EMPTY_5`)}
+                                  name={`arrival.${index}.__EMPTY_5`}
+                                  color={
+                                    getValues(`arrival.${index}.__EMPTY_5`) ===
+                                    '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                          </Td>
+                          <Td
+                            maxWidth="12"
+                            borderRight="1px"
+                            borderRightColor="gray.200"
+                          >
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>de: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(`rangeAfrom.${index}.__EMPTY_7`)}
+                                  name={`rangeAfrom.${index}.__EMPTY_7`}
+                                  color={
+                                    getValues(
+                                      `rangeAfrom.${index}.__EMPTY_7`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                            <Divider borderColor="gray.300" />
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>até: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(`rangeAto.${index}.__EMPTY_8`)}
+                                  name={`rangeAto.${index}.__EMPTY_8`}
+                                  color={
+                                    getValues(`rangeAto.${index}.__EMPTY_8`) ===
+                                    '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                          </Td>
+
+                          <Td
+                            maxWidth="12"
+                            borderRight="1px"
+                            borderRightColor="gray.200"
+                          >
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>de: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(
+                                    `rangeBfrom.${index}.__EMPTY_10`,
+                                  )}
+                                  name={`rangeBfrom.${index}.__EMPTY_10`}
+                                  color={
+                                    getValues(
+                                      `rangeBfrom.${index}.__EMPTY_10`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                            <Divider borderColor="gray.300" />
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>até: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(`rangeBto.${index}.__EMPTY_12`)}
+                                  name={`rangeBto.${index}.__EMPTY_12`}
+                                  color={
+                                    getValues(
+                                      `rangeBto.${index}.__EMPTY_12`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                          </Td>
+                          <Td
+                            maxWidth="12"
+                            borderRight="1px"
+                            borderRightColor="gray.200"
+                          >
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>de: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(
+                                    `rangeCfrom.${index}.__EMPTY_13`,
+                                  )}
+                                  name={`rangeCfrom.${index}.__EMPTY_13`}
+                                  color={
+                                    getValues(
+                                      `rangeCfrom.${index}.__EMPTY_13`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                            <Divider borderColor="gray.300" />
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>até: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(`rangeCto.${index}.__EMPTY_14`)}
+                                  name={`rangeCto.${index}.__EMPTY_14`}
+                                  color={
+                                    getValues(
+                                      `rangeCto.${index}.__EMPTY_14`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                          </Td>
+                          <Td>
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>de: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(
+                                    `rangeDfrom.${index}.__EMPTY_15`,
+                                  )}
+                                  name={`rangeDfrom.${index}.__EMPTY_15`}
+                                  color={
+                                    getValues(
+                                      `rangeDfrom.${index}.__EMPTY_15`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                            <Divider borderColor="gray.300" />
+                            <Flex
+                              flexDirection="row"
+                              justifyContent="space-between"
+                            >
+                              <h1>até: </h1>
+                              <Box>
+                                <InputHour
+                                  {...register(`rangeDto.${index}.__EMPTY_17`)}
+                                  name={`rangeDto.${index}.__EMPTY_17`}
+                                  color={
+                                    getValues(
+                                      `rangeDto.${index}.__EMPTY_17`,
+                                    ) === '0:00h'
+                                      ? 'gray.400'
+                                      : 'gray.800'
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onClick={closeModalAndReset}
+                    size="sm"
+                    fontSize="sm"
+                    colorScheme="gray"
+                    cursor="pointer"
+                    leftIcon={<Icon as={RiDeleteBackLine} fontSize="20" />}
+                  >
+                    Cancelar
+                  </Button>
+                  <PositiveButton
+                    marginLeft="4"
+                    type="submit"
+                    isLoading={isSubmitting}
+                    leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                  >
+                    Salvar
+                  </PositiveButton>
+                </ModalFooter>
+              </>
+            ) : (
+              <></>
+            )}
+          </ModalContent>
+        </Box>
+      </Modal>
     </Flex>
   )
 }
