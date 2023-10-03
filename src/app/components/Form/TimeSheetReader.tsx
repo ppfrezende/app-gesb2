@@ -226,7 +226,7 @@ export function TimeSheetReader() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {fileData?.map((item: TimeSheetData, index) => (
+                      {fileData?.map((_, index) => (
                         <Tr key={index} fontSize="12">
                           <Td
                             maxWidth="12"

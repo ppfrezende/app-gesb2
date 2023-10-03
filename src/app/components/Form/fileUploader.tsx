@@ -49,7 +49,6 @@ export function FileUploader({ onChange }: FileUploaderProps) {
           boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
         }}
         _active={{
-          bg: 'gray.300',
           transform: 'scale(0.98)',
           borderColor: '#bec3c9',
         }}

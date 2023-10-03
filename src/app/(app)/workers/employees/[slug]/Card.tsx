@@ -7,10 +7,11 @@ import { ElementType } from 'react'
 interface CardsProps {
   title: string
   path: string
-  icon: ElementType
+  iconTop: ElementType
+  iconBottom: ElementType
 }
 
-export default function Card({ icon, path, title }: CardsProps) {
+export default function Card({ iconTop, iconBottom, path, title }: CardsProps) {
   return (
     <Flex
       as={Link}
@@ -26,7 +27,6 @@ export default function Card({ icon, path, title }: CardsProps) {
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
       }}
       _active={{
-        bg: 'gray.300',
         transform: 'scale(0.98)',
         borderColor: '#bec3c9',
       }}
@@ -34,8 +34,9 @@ export default function Card({ icon, path, title }: CardsProps) {
         boxShadow: '0 0 1px 2px red.600, 0 1px 1px rgba(0, 0, 0, .15)',
       }}
     >
-      <Icon as={icon} color="gray.700" fontSize="25px" marginBottom="6" />
+      <Icon as={iconTop} color="gray.700" fontSize="25px" marginBottom="6" />
       <Heading color="gray.700">{title}</Heading>
+      <Icon as={iconBottom} fontSize="60px" marginTop="6" />
     </Flex>
   )
 }

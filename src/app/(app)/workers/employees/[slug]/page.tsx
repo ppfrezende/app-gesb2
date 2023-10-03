@@ -10,6 +10,8 @@ import {
   Divider,
 } from '@/app/components/chakraui'
 import {
+  FcBarChart,
+  FcStatistics,
   RiArrowLeftLine,
   RiFileExcel2Line,
   RiHammerLine,
@@ -171,12 +173,23 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
         justifyContent="space-between"
       >
         <Card
-          icon={RiFileExcel2Line}
+          iconTop={RiFileExcel2Line}
+          iconBottom={FcBarChart}
           path={`/workers/employees/${id}/timesheets`}
           title="TimeSheets"
         />
-        <Card icon={RiHammerLine} path={`#`} title="Intervenções" />
-        <Card icon={RiFileExcel2Line} path={`#`} title="Outra Coisa" />
+        <Card
+          iconTop={RiHammerLine}
+          iconBottom={FcStatistics}
+          path={`#`}
+          title="Intervenções"
+        />
+        <Card
+          iconTop={RiFileExcel2Line}
+          iconBottom={FcBarChart}
+          path={`#`}
+          title="Outra Coisa"
+        />
       </Flex>
     </Flex>
   )

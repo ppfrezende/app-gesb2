@@ -51,7 +51,8 @@ export default function TimeSheetsList({
         padding="6"
         boxShadow="0px 4px 10px rgba(0, 0, 0, 0.2)"
       >
-        <Table colorScheme="blackAlpha">
+        Ainda não há timesheets importados...
+        {/* <Table colorScheme="blackAlpha">
           <Thead>
             <Tr>
               <Th paddingX="6" color="gray.800" width="8">
@@ -63,8 +64,8 @@ export default function TimeSheetsList({
             </Tr>
           </Thead>
 
-          <Tbody>{/* <EmployeesTable /> */}</Tbody>
-        </Table>
+         // <Tbody><EmployeesTable /> </Tbody>
+        </Table> */}
       </Box>
     </Flex>
   )
