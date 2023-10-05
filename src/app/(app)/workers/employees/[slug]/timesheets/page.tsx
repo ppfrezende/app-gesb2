@@ -1,20 +1,9 @@
 'use client'
 
-import { TimeSheetReader } from '@/app/components/Form/TimeSheetReader'
+import { TimeSheetReader } from '@/app/components/Form/TimeSheetReader/TimeSheetReader'
 
 import Link from 'next/link'
-import {
-  Box,
-  Flex,
-  Link as ChakraLink,
-  Icon,
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Checkbox,
-  Tbody,
-} from '@/app/components/chakraui'
+import { Box, Flex, Link as ChakraLink, Icon } from '@/app/components/chakraui'
 import { RiArrowLeftLine } from '@/app/components/icons'
 
 export default function TimeSheetsList({
@@ -39,7 +28,7 @@ export default function TimeSheetsList({
 
           <Flex>
             <Box marginRight="4">
-              <TimeSheetReader />
+              <TimeSheetReader technician_id={id} />
             </Box>
           </Flex>
         </Flex>
