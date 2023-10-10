@@ -1,22 +1,26 @@
 'use client'
 
 import { Link as ChakraLink, Td, Tr, Text } from '@/app/components/chakraui'
+import Link from 'next/link'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useState } from 'react'
-import Link from 'next/link'
 import {
   GetTimeSheetResponse,
   TimeSheet,
-  getTimeSheets,
+  getTimeSheetsByTechId,
 } from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
 import { convertDecimalToHour } from '@/utils/hourConverter'
 
-export default function AllTimeSheetsTable() {
+type TimeSheetListProps = {
+  technician_id: string
+}
+
+export default function TimeSheetsTable({ technician_id }: TimeSheetListProps) {
   const [page] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['timesheet', page],
-    queryFn: () => getTimeSheets(page),
+    queryKey: ['timesheet', technician_id, page],
+    queryFn: () => getTimeSheetsByTechId(technician_id, page),
     staleTime: 60000,
   }) as UseQueryResult<GetTimeSheetResponse, unknown>
 
@@ -26,7 +30,7 @@ export default function AllTimeSheetsTable() {
         return (
           <Tr key={timesheet.id}>
             <Td>
-              <ChakraLink as={Link} href={`timesheets/${timesheet.id}`}>
+              <ChakraLink as={Link} href={`/timesheets/${timesheet.id}`}>
                 <Text>{timesheet.intervention_description}</Text>
               </ChakraLink>
             </Td>

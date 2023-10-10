@@ -173,12 +173,14 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
         justifyContent="space-between"
       >
         <Card
+          marginRight="2"
           iconTop={RiFileExcel2Line}
           iconBottom={FcBarChart}
           path={`/workers/employees/${id}/timesheets`}
           title="TimeSheets"
         />
         <Card
+          marginRight="2"
           iconTop={RiHammerLine}
           iconBottom={FcStatistics}
           path={`#`}

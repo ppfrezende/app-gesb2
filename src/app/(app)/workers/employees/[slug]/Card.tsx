@@ -1,23 +1,30 @@
 'use client'
 import Link from 'next/link'
 
-import { Flex, Icon, Heading } from '@/app/components/chakraui'
+import { Flex, Icon, Heading, FlexProps } from '@/app/components/chakraui'
 import { ElementType } from 'react'
 
-interface CardsProps {
+interface CardsProps extends FlexProps {
   title: string
   path: string
   iconTop: ElementType
   iconBottom: ElementType
 }
 
-export default function Card({ iconTop, iconBottom, path, title }: CardsProps) {
+export default function Card({
+  iconTop,
+  iconBottom,
+  path,
+  title,
+  ...rest
+}: CardsProps) {
   return (
     <Flex
       as={Link}
       href={path}
       flexDirection="column"
       alignItems="center"
+      minWidth="16"
       borderRadius="6"
       bg="gray.200"
       padding="8"
@@ -33,6 +40,7 @@ export default function Card({ iconTop, iconBottom, path, title }: CardsProps) {
       _focus={{
         boxShadow: '0 0 1px 2px red.600, 0 1px 1px rgba(0, 0, 0, .15)',
       }}
+      {...rest}
     >
       <Icon as={iconTop} color="gray.700" fontSize="25px" marginBottom="6" />
       <Heading color="gray.700">{title}</Heading>

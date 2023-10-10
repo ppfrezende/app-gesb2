@@ -27,11 +27,11 @@ import { PositiveButton } from '../../Buttons/PositiveButton'
 import { FileUploader } from './fileUploader'
 import { ImportButton } from '../../Buttons/ImportButton'
 import TechnicianInfo from './TechnicianInfo'
-import TimeSheetTable from './TimeSheetForm'
 import useTimeSheetUpload from './hooks/useTimeSheetUpload'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '@/services/apiClient'
 import { queryClient } from '@/services/queryClient'
+import TimeSheetForm from './TimeSheetForm'
 
 type TimeSheetData = {
   __EMPTY_1: number // Date
@@ -268,7 +268,7 @@ export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
                   />
                 </ModalHeader>
                 <ModalBody>
-                  <TimeSheetTable fileData={fileData} register={register} />
+                  <TimeSheetForm fileData={fileData} register={register} />
                 </ModalBody>
                 <ModalFooter>
                   <Button

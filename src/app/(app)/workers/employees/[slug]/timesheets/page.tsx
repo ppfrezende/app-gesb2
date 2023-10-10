@@ -3,8 +3,19 @@
 import { TimeSheetReader } from '@/app/components/Form/TimeSheetReader/TimeSheetReader'
 
 import Link from 'next/link'
-import { Box, Flex, Link as ChakraLink, Icon } from '@/app/components/chakraui'
+import {
+  Box,
+  Flex,
+  Link as ChakraLink,
+  Icon,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+} from '@/app/components/chakraui'
 import { RiArrowLeftLine } from '@/app/components/icons'
+import TimeSheetsTable from './TimeSheetsTable'
 
 export default function TimeSheetsList({
   params,
@@ -40,21 +51,21 @@ export default function TimeSheetsList({
         padding="6"
         boxShadow="0px 4px 10px rgba(0, 0, 0, 0.2)"
       >
-        Ainda não há timesheets importados...
-        {/* <Table colorScheme="blackAlpha">
+        <Table colorScheme="blackAlpha">
           <Thead>
             <Tr>
-              <Th paddingX="6" color="gray.800" width="8">
-                <Checkbox colorScheme="red" borderColor="gray.500" />
-              </Th>
-              <Th width="4" />
+              <Th>Intervenção</Th>
+              <Th>Site</Th>
+              <Th>Horas Normais</Th>
+              <Th>Horas Extras</Th>
+              <Th>Técnico</Th>
               <Th>Data</Th>
-              <Th>Horas Totais</Th>
             </Tr>
           </Thead>
-
-         // <Tbody><EmployeesTable /> </Tbody>
-        </Table> */}
+          <Tbody>
+            <TimeSheetsTable technician_id={id} />
+          </Tbody>
+        </Table>
       </Box>
     </Flex>
   )

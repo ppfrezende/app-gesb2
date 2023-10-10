@@ -90,4 +90,5 @@ export type {
   SelectProps,
   TextareaProps,
   SwitchProps,
+  FlexProps,
 } from '@chakra-ui/react'
