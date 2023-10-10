@@ -57,7 +57,7 @@ export function DeleteModal({
         duration: 3000,
         isClosable: true,
       })
-      router.push('/main-employees')
+      router.push('/registrations')
     } else {
       onDeleteClose()
       toast({

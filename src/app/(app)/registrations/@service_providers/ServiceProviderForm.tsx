@@ -132,6 +132,8 @@ export function ServiceProviderForm({
       )
 
       handleSetCepData(data)
+
+      console.log(data)
     },
     [handleSetCepData],
   )

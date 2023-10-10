@@ -32,12 +32,10 @@ export default function useTimeSheetUpload() {
           const sheetName = workbook.SheetNames[0]
           const sheet = workbook.Sheets[sheetName]
           const json = XLSX.utils.sheet_to_json(sheet)
-          console.log(json)
 
           const dayHoursWorkedArray = json.slice(12, 27)
 
           const basicInformationArray: BasicInformation[] = json.slice(1, 6)
-          console.log(basicInformationArray)
 
           const technician_name = basicInformationArray[0]?.__EMPTY_36
           const site = basicInformationArray[3]?.__EMPTY_3

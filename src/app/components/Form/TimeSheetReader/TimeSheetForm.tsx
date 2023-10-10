@@ -16,7 +16,7 @@ import { UseFormRegister, FieldValues } from 'react-hook-form'
 import { InputHour } from '../inputHour'
 
 type TimeSheetData = {
-  __EMPTY_1: number // Date
+  __EMPTY_1: number // Day
   __EMPTY_3: number // Departure
   __EMPTY_5: number // Arrival
   // Range A
@@ -40,7 +40,7 @@ type TimeSheetTableProps = {
   register: UseFormRegister<FieldValues>
 }
 
-export default function TimeSheetTable({
+export default function TimeSheetForm({
   fileData,
   register,
 }: TimeSheetTableProps) {
@@ -63,8 +63,8 @@ export default function TimeSheetTable({
             <Td maxWidth="12" borderRight="1px" borderRightColor="gray.200">
               <Input
                 isReadOnly={true}
-                {...register(`date.${index}.__EMPTY_1`)}
-                name={`date.${index}.__EMPTY_1`}
+                {...register(`day.${index}.__EMPTY_1`)}
+                name={`day.${index}.__EMPTY_1`}
                 border="none"
                 size="12"
               />
@@ -179,7 +179,7 @@ export default function TimeSheetTable({
               <Box>
                 <Input
                   {...register(`on_offshore.${index}.__EMPTY_25`)}
-                  name={`date.${index}.__EMPTY_25`}
+                  name={`on_offshore.${index}.__EMPTY_25`}
                   border="none"
                   size="12"
                   borderRadius="4"

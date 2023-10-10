@@ -7,6 +7,7 @@ import {
   RiParentLine,
   RiCompasses2Line,
   RiProfileLine,
+  RiFileExcel2Line,
 } from '@/app/components/icons'
 
 export function SidebarNav() {
@@ -28,6 +29,9 @@ export function SidebarNav() {
         </NavLink>
         <NavLink icon={RiCompasses2Line} href="/main-management">
           Gerenciamento
+        </NavLink>
+        <NavLink icon={RiFileExcel2Line} href="/timesheets">
+          TimeSheets
         </NavLink>
       </NavSection>
     </Stack>

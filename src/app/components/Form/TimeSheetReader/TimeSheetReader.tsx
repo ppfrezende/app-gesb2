@@ -14,6 +14,7 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
+  useToast,
 } from '@/app/components/chakraui'
 import {
   RiAddLine,
@@ -26,8 +27,11 @@ import { PositiveButton } from '../../Buttons/PositiveButton'
 import { FileUploader } from './fileUploader'
 import { ImportButton } from '../../Buttons/ImportButton'
 import TechnicianInfo from './TechnicianInfo'
-import TimeSheetTable from './TimeSheetTable'
+import TimeSheetTable from './TimeSheetForm'
 import useTimeSheetUpload from './hooks/useTimeSheetUpload'
+import { useMutation } from '@tanstack/react-query'
+import { api } from '@/services/apiClient'
+import { queryClient } from '@/services/queryClient'
 
 type TimeSheetData = {
   __EMPTY_1: number // Date
@@ -53,8 +57,37 @@ type TimeSheetReaderProps = {
   technician_id: string
 }
 
+interface BasicInformation {
+  interventionDescription: string
+  isInternationalJob: boolean
+  firstDate: number
+  secondDate: number
+  site: string
+}
+
+interface DayHoursData {
+  day: { __EMPTY_1: string }[]
+  departure: { __EMPTY_3: string }[]
+  arrival: { __EMPTY_5: string }[]
+  rangeAfrom: { __EMPTY_7: string }[]
+  rangeAto: { __EMPTY_8: string }[]
+  rangeBfrom: { __EMPTY_10: string }[]
+  rangeBto: { __EMPTY_12: string }[]
+  rangeCfrom: { __EMPTY_13: string }[]
+  rangeCto: { __EMPTY_14: string }[]
+  rangeDfrom: { __EMPTY_15: string }[]
+  rangeDto: { __EMPTY_17: string }[]
+  on_offshore: { __EMPTY_25: string }[]
+}
+
+interface TimeSheetValues {
+  basicInformation: BasicInformation
+  dayHoursDataArray: DayHoursData
+}
+
 export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const toast = useToast()
 
   const {
     fileData,
@@ -74,18 +107,40 @@ export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
 
   const { isSubmitting } = formState
 
-  const handleCreateTimeSheet: SubmitHandler<unknown> = async (values) => {
-    console.log(technician_id)
+  const createTimeSheet = useMutation(
+    async (data: TimeSheetValues) => {
+      try {
+        await api.post(`/technicians/${technician_id}/timesheet`, data)
 
-    console.log({
+        closeModalAndReset()
+      } catch (err) {
+        toastError()
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['timesheets'] })
+      },
+    },
+  )
+
+  const handleCreateTimeSheet: SubmitHandler<DayHoursData> = async (values) => {
+    const basicInformation = {
       interventionDescription,
       isInternationalJob,
       firstDate,
       secondDate,
       site,
-    })
+    }
 
-    console.log(values)
+    const dayHoursDataArray = values
+
+    const dataToSend = {
+      basicInformation,
+      dayHoursDataArray,
+    }
+
+    await createTimeSheet.mutateAsync(dataToSend)
   }
 
   function closeModalAndReset() {
@@ -93,12 +148,21 @@ export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
     setFileData([])
   }
 
+  function toastError() {
+    toast({
+      title: 'Erro na criação do TimeSheet.',
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    })
+  }
+
   useEffect(() => {
     fileData &&
       fileData?.forEach((item: TimeSheetData, index) => {
         item.__EMPTY_1 &&
           setValue(
-            `date.${index}.__EMPTY_1`,
+            `day.${index}.__EMPTY_1`,
             serialNumberToDate(item.__EMPTY_1).toLocaleDateString(),
           )
 

@@ -49,7 +49,7 @@ export function setupAPIClient(ctx = undefined) {
       return response
     },
     (error: AxiosError<AxiosErrorResponse>) => {
-      console.log(error.response)
+      // console.log(error.response)
 
       if (error.response?.status === 401) {
         if (error.response.data?.code === 'token.expired') {

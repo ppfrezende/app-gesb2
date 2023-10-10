@@ -82,7 +82,7 @@ export function SiteForm({ site, siteId = '' }: FormProps) {
   const createSite = useMutation(
     async (site: SiteFormData) => {
       try {
-        await api.post(`sites/`, site)
+        await api.post(`sites`, site)
         closeModalandAddToast()
         reset()
       } catch (err) {
