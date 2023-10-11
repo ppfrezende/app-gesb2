@@ -311,16 +311,8 @@ export function ServiceProviderForm({
 
   return (
     <>
-      <PositiveButton
-        onClick={onOpen}
-        leftIcon={
-          <Icon
-            as={serviceProviderId ? RiEdit2Line : RiAddLine}
-            fontSize="20"
-          />
-        }
-      >
-        {serviceProviderId ? 'Editar' : 'Cadastrar'}
+      <PositiveButton onClick={onOpen}>
+        <Icon as={serviceProviderId ? RiEdit2Line : RiAddLine} fontSize="20" />
       </PositiveButton>
       <Modal
         size="xl"

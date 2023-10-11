@@ -1,4 +1,5 @@
 import { api } from '@/services/apiClient'
+import { convertDecimalToHour } from '@/utils/hourConverter'
 
 export type TimesheetDay = {
   id: string
@@ -170,9 +171,7 @@ async function getEmployee(id: string): Promise<TechnicianResponse | null> {
         email: response.data.employee.email,
       }
     }
-  } catch (err) {
-    console.log({ message: 'Is not a CLT technician' })
-  }
+  } catch (err) {}
   return null
 }
 
@@ -187,9 +186,7 @@ async function getServiceProvider(
         email: response.data.service_provider.email,
       }
     }
-  } catch (err) {
-    console.log({ message: 'Is not a PJ technician' })
-  }
+  } catch (err) {}
   return null
 }
 
@@ -233,18 +230,22 @@ export async function getTimeSheet(
     timesheetdays: data.timesheetdata.timesheetdays.map(
       (day: TimesheetDay) => ({
         id: day.id,
-        day: day.day,
-        departure: day.departure,
-        arrival: day.arrival,
-        rangeAfrom: day.rangeAfrom,
-        rangeAto: day.rangeAto,
-        rangeBfrom: day.rangeBfrom,
-        rangeBto: day.rangeBto,
-        rangeCfrom: day.rangeCfrom,
-        rangeCto: day.rangeCto,
-        rangeDfrom: day.rangeDfrom,
-        rangeDto: day.rangeDto,
-        on_offshore: day.on_offshore,
+        day: new Date(day.day).toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+        }),
+        departure: convertDecimalToHour(day.departure),
+        arrival: convertDecimalToHour(day.arrival),
+        rangeAfrom: convertDecimalToHour(day.rangeAfrom),
+        rangeAto: convertDecimalToHour(day.rangeAto),
+        rangeBfrom: convertDecimalToHour(day.rangeBfrom),
+        rangeBto: convertDecimalToHour(day.rangeBto),
+        rangeCfrom: convertDecimalToHour(day.rangeCfrom),
+        rangeCto: convertDecimalToHour(day.rangeCto),
+        rangeDfrom: convertDecimalToHour(day.rangeDfrom),
+        rangeDto: convertDecimalToHour(day.rangeDto),
+        on_offshore: day.on_offshore === true ? 'OnShore' : 'OffShore',
         technician_id: day.technician_id,
         timeSheetDataId: day.timeSheetDataId,
         userName: day.userName,

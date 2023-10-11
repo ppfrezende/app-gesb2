@@ -276,13 +276,8 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
 
   return (
     <>
-      <PositiveButton
-        onClick={onOpen}
-        leftIcon={
-          <Icon as={employeeId ? RiEdit2Line : RiAddLine} fontSize="20" />
-        }
-      >
-        {employeeId ? 'Editar' : 'Cadastrar'}
+      <PositiveButton onClick={onOpen}>
+        <Icon as={employeeId ? RiEdit2Line : RiAddLine} fontSize="20" />
       </PositiveButton>
       <Modal
         size="xl"

@@ -70,10 +70,10 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
         <>
           {data?.timesheetdays?.map((timesheetday, index) => (
             <Tr key={index} fontSize="12">
-              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.200">
+              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.300">
                 <Text>{timesheetday.day}</Text>
               </Td>
-              <Td width="12" borderRight="1px" borderRightColor="gray.200">
+              <Td width="12" borderRight="1px" borderRightColor="gray.300">
                 <Flex flexDirection="row" justifyContent="space-between">
                   <Text>Partida: </Text>
                   <Box>
@@ -84,11 +84,11 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
                 <Flex flexDirection="row" justifyContent="space-between">
                   <Text>Chegada: </Text>
                   <Box>
-                    <Text>{timesheetday.arrival}</Text>
+                    <Text marginLeft="2">{timesheetday.arrival}</Text>
                   </Box>
                 </Flex>
               </Td>
-              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.200">
+              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.300">
                 <Flex flexDirection="row" justifyContent="space-between">
                   <h1>de: </h1>
                   <Box>
@@ -104,7 +104,7 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
                 </Flex>
               </Td>
 
-              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.200">
+              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.300">
                 <Flex flexDirection="row" justifyContent="space-between">
                   <h1>de: </h1>
                   <Box>
@@ -119,7 +119,7 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
                   </Box>
                 </Flex>
               </Td>
-              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.200">
+              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.300">
                 <Flex flexDirection="row" justifyContent="space-between">
                   <h1>de: </h1>
                   <Box>
@@ -134,7 +134,7 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
                   </Box>
                 </Flex>
               </Td>
-              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.200">
+              <Td maxWidth="12" borderRight="1px" borderRightColor="gray.300">
                 <Flex flexDirection="row" justifyContent="space-between">
                   <h1>de: </h1>
                   <Box>
@@ -161,7 +161,7 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
                   focusBorderColor="gray.300"
                   bgColor="gray.100"
                   _hover={{
-                    bgColor: 'gray.200',
+                    bgColor: 'gray.300',
                   }}
                   width="16"
                   padding="2px"
