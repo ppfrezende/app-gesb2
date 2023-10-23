@@ -84,7 +84,7 @@ export default function ServiceProviderPage({
                   <strong>{data?.name}</strong>
                 </Text>
 
-                <Text fontStyle="italic">FSR</Text>
+                <Text fontStyle="italic">{data?.job_title}</Text>
               </Box>
               <Box textAlign="end">
                 <Text fontSize="10">Validade do contrato:</Text>
@@ -181,9 +181,11 @@ export default function ServiceProviderPage({
               </Flex>
             </Flex>
 
-            <Text marginTop="2" fontSize="10">
-              {data?.userEmail}
-            </Text>
+            <Flex justifyContent="end">
+              <Text marginTop="2" fontSize="9px">
+                <strong>Criado por: </strong> {data?.userName}
+              </Text>
+            </Flex>
           </Box>
         </Flex>
       </VStack>

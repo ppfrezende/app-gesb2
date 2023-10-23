@@ -17,6 +17,7 @@ export const registerEmployeeFormSchema = yup
     complement: yup.string(),
     city: yup.string().required('A cidade é obrigatória'),
     uf: yup.string().required('O UF é obrigatório'),
+    job_title: yup.string().required('O cargo é obrigatório'),
     salary: yup.number().typeError('O salário é obrigatório'),
   })
   .transform((field) => ({
@@ -32,5 +33,6 @@ export const registerEmployeeFormSchema = yup
     complement: field.complement,
     city: field.city,
     uf: field.uf,
+    job_title: field.job_title,
     salary: field.salary,
   }))

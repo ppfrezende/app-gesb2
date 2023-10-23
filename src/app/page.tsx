@@ -8,6 +8,7 @@ import {
   InputRightElement,
   Button,
   Icon,
+  Text,
 } from '@/app/components/chakraui'
 import { Input } from '@/app/components/Form/input'
 import { RiLoginBoxLine, RiEyeLine, RiEyeOffLine } from '@/app/components/icons'
@@ -33,7 +34,8 @@ const authenticateBodySchema = yup.object({
 })
 
 export default function SignIn() {
-  const { signIn } = useContext(AuthContext)
+  const { signIn, isInvalidCredentials, setIsInvalidCredentials } =
+    useContext(AuthContext)
 
   const { handleSubmit, register, formState } = useForm({
     resolver: yupResolver(authenticateBodySchema),
@@ -69,6 +71,7 @@ export default function SignIn() {
       >
         <Stack spacing={2}>
           <Input
+            onFocus={() => setIsInvalidCredentials(false)}
             type="email"
             label="E-mail"
             {...register('email')}
@@ -77,6 +80,7 @@ export default function SignIn() {
           />
           <InputGroup>
             <Input
+              onFocus={() => setIsInvalidCredentials(false)}
               {...register('password')}
               name="password"
               label="Senha:"
@@ -107,6 +111,11 @@ export default function SignIn() {
         >
           <Icon as={RiLoginBoxLine} fontSize="20" />
         </PositiveButton>
+        {isInvalidCredentials && (
+          <Text marginTop="4" marginBottom="-2" color="red" fontSize="13px">
+            Credenciais invalidas
+          </Text>
+        )}
       </Flex>
     </Flex>
   )

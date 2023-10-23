@@ -15,6 +15,7 @@ export const updateServiceProviderProfileFormSchema = yup.object({
   complement: yup.string(),
   city: yup.string(),
   uf: yup.string(),
+  job_title: yup.string(),
   normal_hour: yup
     .number()
     .nullable()

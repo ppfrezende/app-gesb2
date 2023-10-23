@@ -17,6 +17,7 @@ export const updateEmployeeFormSchema = yup.object({
   complement: yup.string(),
   city: yup.string(),
   uf: yup.string(),
+  job_title: yup.string(),
   salary: yup
     .number()
     .nullable()

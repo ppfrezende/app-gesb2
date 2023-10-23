@@ -22,9 +22,11 @@ type SignInCredentials = {
 
 type AuthContextData = {
   signIn: (credentials: SignInCredentials) => Promise<void>
-  signOut: () => void
+  setIsInvalidCredentials: (value: boolean) => void
   user: User
   isAuthenticate: boolean
+  isInvalidCredentials: boolean
+  signOut: () => void
 }
 
 type AuthProviderProps = {
@@ -45,6 +47,8 @@ export function signOut(byBroadcastChannel = false) {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>(null)
+  const [isInvalidCredentials, setIsInvalidCredentials] =
+    useState<boolean>(false)
 
   const router = useRouter()
   const isAuthenticate = false
@@ -122,12 +126,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       router.push('/dashboard')
     } catch (err) {
-      console.log(err)
+      const isInvalidCredentials =
+        err.response.data.message === 'Invalid credentials.'
+
+      if (isInvalidCredentials) {
+        setIsInvalidCredentials(true)
+      }
     }
   }
 
   return (
-    <AuthContext.Provider value={{ signIn, signOut, isAuthenticate, user }}>
+    <AuthContext.Provider
+      value={{
+        signIn,
+        signOut,
+        isAuthenticate,
+        user,
+        isInvalidCredentials,
+        setIsInvalidCredentials,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

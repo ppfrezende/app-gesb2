@@ -12,7 +12,7 @@ export function Sidebar() {
       borderRadius="8"
       bg="gray.100"
       as="aside"
-      width="64"
+      width="60"
       minHeight="820"
       marginRight="8"
     >

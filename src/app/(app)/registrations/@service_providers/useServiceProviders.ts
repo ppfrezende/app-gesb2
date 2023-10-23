@@ -15,8 +15,9 @@ export type ServiceProvider = {
   complement: string
   city: string
   uf: string
+  job_title: string
   avatar: string
-  userEmail: string
+  userName: string
   normal_hour: number
   extra_hour: number
   day_hour: number
@@ -56,7 +57,8 @@ export const getServiceProviders = async (
         complement: service_providers.complement,
         city: service_providers.city,
         uf: service_providers.uf,
-        userEmail: service_providers.userEmail,
+        job_title: service_providers.job_title,
+        userName: service_providers.userName,
         normal_hour: service_providers.normal_hour,
         extra_hour: service_providers.extra_hour,
         day_hour: service_providers.day_hour,
@@ -96,7 +98,8 @@ export async function getServiceProvider(id: string): Promise<ServiceProvider> {
     complement: data.service_provider.complement,
     city: data.service_provider.city,
     uf: data.service_provider.uf,
-    userEmail: data.service_provider.userEmail,
+    job_title: data.service_provider.job_title,
+    userName: data.service_provider.userName,
     normal_hour: data.service_provider.normal_hour.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',

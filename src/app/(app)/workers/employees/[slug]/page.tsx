@@ -31,7 +31,7 @@ import {
   getEmployee,
 } from '@/app/(app)/registrations/@employees/useEmployees'
 import { EmployeeForm } from '@/app/(app)/registrations/@employees/EmployeeForm'
-import Card from './Card'
+import Card from '../../../../components/Cards/Card'
 
 export default function EmployeePage({ params }: { params: { slug: string } }) {
   const id = params.slug
@@ -93,7 +93,7 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
                     <strong>{data?.name}</strong>
                   </Text>
 
-                  <Text fontStyle="italic">FSR</Text>
+                  <Text fontStyle="italic">{data?.job_title}</Text>
                 </Box>
                 <Box textAlign="end">
                   <Text fontSize="10">Data de admissão:</Text>
@@ -157,10 +157,12 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
                   <Text fontSize="sm">{data?.salary}</Text>
                 </Flex>
               </Flex>
-
-              <Text marginTop="2" fontSize="10">
-                {data?.userEmail}
-              </Text>
+              <Flex justifyContent="end">
+                <Text marginTop="2" fontSize="9px">
+                  <strong>Criado por: </strong>
+                  {data?.userName}
+                </Text>
+              </Flex>
             </Box>
           </Flex>
         </VStack>

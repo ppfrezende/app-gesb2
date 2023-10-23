@@ -15,7 +15,6 @@ import {
   Td,
   Tr,
   Text,
-  Checkbox,
   Icon,
 } from '@/app/components/chakraui'
 import { RiEdit2Line } from '@/app/components/icons'
@@ -38,9 +37,6 @@ export default function EmployeesTable() {
       {data?.employees.map((employee) => {
         return (
           <Tr key={employee.id}>
-            <Td paddingX="6">
-              <Checkbox colorScheme="red" borderColor="gray.500" />
-            </Td>
             <Td>
               <Avatar name={employee.name} src={avatarURL(employee?.avatar)} />
             </Td>
@@ -58,13 +54,9 @@ export default function EmployeesTable() {
                       as={Link}
                       href={`workers/employees/${employee.id}`}
                     >
-                      <Text fontSize="sm" fontWeight="bold">
-                        {employee.name}
-                      </Text>
+                      <Text fontWeight="bold">{employee.name}</Text>
                     </ChakraLink>
-                    <Text fontSize="sm" color="gray.700">
-                      {employee.email}
-                    </Text>
+                    <Text color="gray.700">{employee.email}</Text>
                   </Box>
                 </PopoverTrigger>
                 <PopoverContent>
@@ -78,19 +70,19 @@ export default function EmployeesTable() {
                     />
                   </PopoverHeader>
                   <PopoverBody>
-                    <Text fontSize="sm">
+                    <Text>
                       <strong>Nome: </strong>
                       {employee.name}
                     </Text>
-                    <Text fontSize="sm">
+                    <Text>
                       <strong>CPF: </strong>
                       {employee.cpf}
                     </Text>
-                    <Text fontSize="sm">
+                    <Text>
                       <strong>E-mail: </strong>
                       {employee.email}
                     </Text>
-                    <Text fontSize="sm">
+                    <Text>
                       <strong>Data de admissão: </strong>
                       {employee.admission_at}
                     </Text>
@@ -104,11 +96,9 @@ export default function EmployeesTable() {
                 as="a"
                 href={`workers/employees/${employee.id}`}
                 size="sm"
-                fontSize="sm"
-                fontWeight="normal"
                 colorScheme="blackAlpha"
                 cursor="pointer"
-                leftIcon={<Icon as={RiEdit2Line} fontSize="16" />}
+                leftIcon={<Icon as={RiEdit2Line} fontSize="12px" />}
               />
             </Td>
           </Tr>

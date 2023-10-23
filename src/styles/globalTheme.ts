@@ -7,5 +7,10 @@ export const theme = extendTheme({
         fontSize: '12px',
       },
     },
+    FormLabel: {
+      baseStyle: {
+        fontSize: '12px',
+      },
+    },
   },
 })

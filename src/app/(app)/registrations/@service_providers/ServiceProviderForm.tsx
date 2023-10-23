@@ -51,6 +51,7 @@ type ServiceProviderFormData = {
   complement?: string
   city?: string
   uf?: string
+  job_title?: string
   avatar?: FileList
   normal_hour?: number
   extra_hour?: number
@@ -95,6 +96,7 @@ export function ServiceProviderForm({
         complement: serviceProviderId ? service_provider?.complement : '',
         city: serviceProviderId ? service_provider?.city : '',
         uf: serviceProviderId ? service_provider?.uf : '',
+        job_title: serviceProviderId ? service_provider?.job_title : '',
         contract_value: serviceProviderId
           ? service_provider?.contract_value
           : null,
@@ -177,6 +179,7 @@ export function ServiceProviderForm({
       complement,
       city,
       uf,
+      job_title,
       avatar,
       contract_value,
       normal_hour,
@@ -205,6 +208,7 @@ export function ServiceProviderForm({
             complement,
             city,
             uf,
+            job_title,
             contract_value,
             normal_hour,
             extra_hour,
@@ -229,6 +233,7 @@ export function ServiceProviderForm({
             complement,
             city,
             uf,
+            job_title,
             avatar,
             contract_value,
             normal_hour,
@@ -356,6 +361,13 @@ export function ServiceProviderForm({
                 type="name"
                 label="Nome:"
                 error={errors.name}
+              />
+              <Input
+                {...register('job_title')}
+                name="job_title"
+                type="name"
+                label="Cargo:"
+                error={errors.job_title}
               />
               <Input
                 {...register('cpf')}

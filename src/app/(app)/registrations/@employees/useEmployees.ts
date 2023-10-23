@@ -15,7 +15,8 @@ export type Employee = {
   city: string
   uf: string
   avatar?: string
-  userEmail: string
+  job_title: string
+  userName: string
   salary: number
 }
 
@@ -50,7 +51,8 @@ export const getEmployees = async (
       complement: employee.complement,
       city: employee.city,
       uf: employee.uf,
-      userEmail: employee.userEmail,
+      job_title: employee.job_title,
+      userName: employee.userName,
       salary: employee.salary,
       admission_at: new Date(employee.admission_at).toLocaleDateString(
         'pt-BR',
@@ -86,7 +88,8 @@ export async function getEmployee(id: string): Promise<Employee> {
     complement: data.employee.complement,
     city: data.employee.city,
     uf: data.employee.uf,
-    userEmail: data.employee.userEmail,
+    job_title: data.employee.job_title,
+    userName: data.employee.userName,
     salary: data.employee.salary.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',

@@ -50,6 +50,7 @@ type EmployeeFormData = {
   complement?: string
   city?: string
   uf?: string
+  job_title?: string
   avatar?: FileList
   salary?: number
 }
@@ -88,6 +89,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
         complement: employeeId ? employee?.complement : '',
         city: employeeId ? employee?.city : '',
         uf: employeeId ? employee?.uf : '',
+        job_title: employeeId ? employee?.job_title : '',
         salary: employeeId ? employee?.salary : null,
       },
       resolver: yupResolver(
@@ -156,6 +158,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
       complement,
       city,
       uf,
+      job_title,
       avatar,
       salary,
     }: EmployeeFormData) => {
@@ -178,6 +181,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
             complement,
             city,
             uf,
+            job_title,
             salary,
           })
           closeModalandAddToast(employeeId)
@@ -199,6 +203,7 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
             complement,
             city,
             uf,
+            job_title,
             salary,
           })
           closeModalandAddToast(employeeId)
@@ -318,6 +323,13 @@ export function EmployeeForm({ employee, employeeId = '' }: FormProps) {
                 type="name"
                 label="Nome:"
                 error={errors.name}
+              />
+              <Input
+                {...register('job_title')}
+                name="job_title"
+                type="name"
+                label="Cargo:"
+                error={errors.job_title}
               />
               <Input
                 {...register('cpf')}

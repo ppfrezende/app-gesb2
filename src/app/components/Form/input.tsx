@@ -6,7 +6,8 @@ import {
   FormLabel,
   FormControl,
   FormErrorMessage,
-} from '@chakra-ui/react'
+  Text,
+} from '@/app/components/chakraui'
 import { FieldError } from 'react-hook-form'
 import { forwardRef, ForwardRefRenderFunction } from 'react'
 
@@ -37,11 +38,15 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
         _hover={{
           bgColor: 'gray.200',
         }}
-        size="sm"
+        size="xs"
         ref={ref}
         {...rest}
       />
-      {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
+      {!!error && (
+        <FormErrorMessage>
+          <Text>{error.message}</Text>
+        </FormErrorMessage>
+      )}
     </FormControl>
   )
 }

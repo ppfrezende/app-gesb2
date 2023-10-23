@@ -44,4 +44,5 @@ export {
   FcBusinessman,
   FcSalesPerformance,
   FcBarChart,
+  FcDisapprove,
 } from 'react-icons/fc'

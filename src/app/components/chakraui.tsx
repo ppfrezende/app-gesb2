@@ -53,6 +53,7 @@ export {
   Tab,
   TabPanel,
   TabIndicator,
+  TableCaption,
   SkeletonCircle,
   SkeletonText,
   Modal,
@@ -71,6 +72,8 @@ export {
   Switch,
   UnorderedList,
   ListItem,
+  RadioGroup,
+  Radio,
   Popover,
   PopoverArrow,
   PopoverTrigger,
@@ -91,4 +94,5 @@ export type {
   TextareaProps,
   SwitchProps,
   FlexProps,
+  ModalProps,
 } from '@chakra-ui/react'

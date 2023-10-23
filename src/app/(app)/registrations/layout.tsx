@@ -16,7 +16,6 @@ import {
   TabPanel,
   TabPanels,
 } from '@/app/components/chakraui'
-import Loading from './loading'
 
 type MainEmployeesLayoutProps = {
   children: ReactNode
@@ -60,7 +59,7 @@ export default function RegistrationsLayout({
           bg="gray.500"
           borderRadius="1px"
         />
-        <Suspense fallback={<Loading />}>
+        <Suspense>
           <TabPanels marginTop="-1">
             <TabPanel>{employees}</TabPanel>
             <TabPanel>{service_providers}</TabPanel>

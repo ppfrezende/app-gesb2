@@ -35,7 +35,7 @@ const InputBase: ForwardRefRenderFunction<
         _hover={{
           bgColor: 'gray.200',
         }}
-        size="sm"
+        size="xs"
         ref={ref}
         {...rest}
       />
