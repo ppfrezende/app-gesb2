@@ -95,4 +95,5 @@ export type {
   SwitchProps,
   FlexProps,
   ModalProps,
+  BoxProps,
 } from '@chakra-ui/react'

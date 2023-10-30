@@ -15,6 +15,8 @@ export function Sidebar() {
       width="60"
       minHeight="820"
       marginRight="8"
+      marginTop="2"
+      boxShadow="0px 4px 10px rgba(0, 0, 0, 0.2)"
     >
       <SidebarNav />
       <Flex color="gray.400">

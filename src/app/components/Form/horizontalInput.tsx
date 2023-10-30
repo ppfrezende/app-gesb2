@@ -55,12 +55,12 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
           width="auto"
           {...rest}
         />
-        {!!error && (
-          <FormErrorMessage>
-            <Text>{error.message}</Text>
-          </FormErrorMessage>
-        )}
       </Flex>
+      {!!error && (
+        <FormErrorMessage>
+          <Text>{error.message}</Text>
+        </FormErrorMessage>
+      )}
     </FormControl>
   )
 }

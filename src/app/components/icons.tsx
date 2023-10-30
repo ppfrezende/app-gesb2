@@ -37,6 +37,8 @@ export {
   RiProfileLine,
   RiEyeFill,
   RiFileExcel2Line,
+  RiFileAddLine,
+  RiUserVoiceFill,
 } from 'react-icons/ri'
 
 export {

@@ -16,6 +16,7 @@ export async function Header() {
       paddingX="6"
       bg="gray.100"
       borderBottomRadius="8"
+      boxShadow="0px 1px 10px rgba(0, 0, 0, 0.2)"
     >
       <Link href={'/dashboard'}>
         <Logo />

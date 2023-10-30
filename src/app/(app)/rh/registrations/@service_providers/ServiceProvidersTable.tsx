@@ -1,7 +1,6 @@
 'use client'
 
 import { Avatar } from '@/app/components/Avatar/Avatar'
-import Link from 'next/link'
 import {
   Box,
   Link as ChakraLink,
@@ -16,46 +15,36 @@ import {
   Td,
   Tr,
   Text,
-  Checkbox,
   Icon,
-  AvatarBadge,
 } from '@/app/components/chakraui'
-import { RiEdit2Line, RiShieldStarFill } from '@/app/components/icons'
+import { RiEdit2Line } from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useState } from 'react'
-import { GetUsersResponse, getUsers } from './useUsers'
 import { avatarURL } from '@/utils/avatarURL'
+import Link from 'next/link'
+import {
+  GetServiceProvidersResponse,
+  getServiceProviders,
+} from './useServiceProviders'
 
-export default function UsersTable() {
+export default function ServiceProvidersTable() {
   const [page] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['users', page],
-    queryFn: () => getUsers(page),
-  }) as UseQueryResult<GetUsersResponse, unknown>
+    queryKey: ['service-providers', page],
+    queryFn: () => getServiceProviders(page),
+  }) as UseQueryResult<GetServiceProvidersResponse, unknown>
 
   return (
     <>
-      {data?.users.map((user) => {
+      {data?.service_providers.map((service_provider) => {
         return (
-          <Tr key={user.id}>
-            <Td paddingX="6">
-              <Checkbox colorScheme="red" borderColor="gray.500" />
-            </Td>
+          <Tr key={service_provider.id}>
             <Td>
-              <Avatar name={user.name} src={avatarURL(user?.avatar)}>
-                {user?.role === 'ADMIN' ? (
-                  <AvatarBadge border="none" bg="none">
-                    <Icon
-                      as={RiShieldStarFill}
-                      fontSize="15"
-                      color="green.500"
-                    />
-                  </AvatarBadge>
-                ) : (
-                  <></>
-                )}
-              </Avatar>
+              <Avatar
+                name={service_provider.name}
+                src={avatarURL(service_provider?.avatar)}
+              />
             </Td>
             <Td paddingX="6">
               <Popover
@@ -67,10 +56,13 @@ export default function UsersTable() {
               >
                 <PopoverTrigger>
                   <Box>
-                    <ChakraLink as={Link} href={`/users/${user.id}`}>
-                      <Text fontWeight="bold">{user.name}</Text>
+                    <ChakraLink
+                      as={Link}
+                      href={`workers/service-providers/${service_provider.id}`}
+                    >
+                      <Text fontWeight="bold">{service_provider.name}</Text>
                     </ChakraLink>
-                    <Text color="gray.700">{user.email}</Text>
+                    <Text color="gray.700">{service_provider.email}</Text>
                   </Box>
                 </PopoverTrigger>
                 <PopoverContent>
@@ -79,26 +71,22 @@ export default function UsersTable() {
                   <PopoverHeader textAlign="center">
                     <Avatar
                       size="sm"
-                      name={user.name}
-                      src={avatarURL(user?.avatar)}
+                      name={service_provider.name}
+                      src={avatarURL(service_provider?.avatar)}
                     />
                   </PopoverHeader>
                   <PopoverBody>
                     <Text>
                       <strong>Nome: </strong>
-                      {user.name}
+                      {service_provider.name}
                     </Text>
                     <Text>
                       <strong>E-mail: </strong>
-                      {user.email}
+                      {service_provider.email}
                     </Text>
                     <Text>
-                      <strong>Setor: </strong>
-                      {user.sector}
-                    </Text>
-                    <Text>
-                      <strong>Data de criação: </strong>
-                      {user.created_at}
+                      <strong>Validade do contrato: </strong>
+                      {service_provider.contract_validity}
                     </Text>
                   </PopoverBody>
                 </PopoverContent>
@@ -108,9 +96,8 @@ export default function UsersTable() {
             <Td>
               <Button
                 as="a"
-                href={`#`}
+                href={`workers/service-providers/${service_provider.id}`}
                 size="sm"
-                fontSize="sm"
                 fontWeight="normal"
                 colorScheme="blackAlpha"
                 cursor="pointer"

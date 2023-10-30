@@ -4,6 +4,7 @@ import {
   FormLabel,
   FormControl,
   FormErrorMessage,
+  Text,
 } from '@/app/components/chakraui'
 import { FieldError } from 'react-hook-form'
 import { forwardRef, ForwardRefRenderFunction } from 'react'
@@ -39,7 +40,11 @@ const InputBase: ForwardRefRenderFunction<
         ref={ref}
         {...rest}
       />
-      {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
+      {!!error && (
+        <FormErrorMessage>
+          <Text>{error.message}</Text>
+        </FormErrorMessage>
+      )}
     </FormControl>
   )
 }

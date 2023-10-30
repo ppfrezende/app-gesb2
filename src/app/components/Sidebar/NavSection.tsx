@@ -1,13 +1,13 @@
 import { ReactNode } from 'react'
-import { Box, Stack } from '@/app/components/chakraui'
+import { Box, BoxProps, Stack } from '@/app/components/chakraui'
 
-interface NavSectionProps {
+interface NavSectionProps extends BoxProps {
   children: ReactNode
 }
 
-export function NavSection({ children }: NavSectionProps) {
+export function NavSection({ children, ...rest }: NavSectionProps) {
   return (
-    <Box>
+    <Box {...rest}>
       <Stack spacing="4" align="stretch">
         {children}
       </Stack>
