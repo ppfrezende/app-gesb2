@@ -210,7 +210,7 @@ export default function ServiceProviderPage({
           marginRight="2"
           iconTop={RiFileExcel2Line}
           iconBottom={FcBarChart}
-          path={`/workers/service-providers/${id}/timesheets`}
+          path={`/rh/workers/service-providers/${id}/timesheets`}
           title="TimeSheets"
         />
         <Card

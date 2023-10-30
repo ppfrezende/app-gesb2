@@ -178,7 +178,7 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
           marginRight="2"
           iconTop={RiFileExcel2Line}
           iconBottom={FcBarChart}
-          path={`/workers/employees/${id}/timesheets`}
+          path={`/rh/workers/employees/${id}/timesheets`}
           title="TimeSheets"
         />
         <Card

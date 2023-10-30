@@ -414,8 +414,8 @@ export default function ConsultivePage({
               <Thead>
                 <Tr>
                   <Th>Skill</Th>
-                  <Th>Hora Normal</Th>
-                  <Th>Hora Viagem</Th>
+                  <Th>H. Normal</Th>
+                  <Th>H. Viagem</Th>
                 </Tr>
               </Thead>
               <Tbody>
