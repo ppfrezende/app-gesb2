@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Checkbox,
   Flex,
   Table,
   Tbody,
@@ -35,9 +34,6 @@ export default function Users() {
         <Table colorScheme="blackAlpha">
           <Thead>
             <Tr>
-              <Th paddingX="6" color="gray.800" width="8">
-                <Checkbox colorScheme="red" borderColor="gray.500" />
-              </Th>
               <Th width="4" />
               <Th>Usuário</Th>
 

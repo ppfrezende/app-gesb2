@@ -15,12 +15,13 @@ import {
   Tbody,
   Td,
 } from '@/app/components/chakraui'
-import { RiArrowLeftLine } from '@/app/components/icons'
+import { RiArrowLeftLine, RiCheckboxCircleFill } from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import Link from 'next/link'
 import { DeleteModal } from '@/app/components/DeleteModal'
 import { ConsultiveResponse, getConsultive } from '../useConsultives'
+import { ConsultiveForm } from '../ConsultiveForm'
 
 export default function ConsultivePage({
   params,
@@ -48,7 +49,7 @@ export default function ConsultivePage({
 
         <Flex>
           <Box marginRight="4">
-            {/* <PurchaseOrderForm purchase_order={data} purchaseOrderId={id} /> */}
+            <ConsultiveForm consultive={data} consultiveId={id} />
           </Box>
 
           <DeleteModal id={id} url="consultives/" title="Consultivo" />
@@ -413,7 +414,8 @@ export default function ConsultivePage({
             <Table size="sm" colorScheme="blackAlpha">
               <Thead>
                 <Tr>
-                  <Th>Skill</Th>
+                  <Th></Th>
+                  <Th>Skills</Th>
                   <Th>H. Normal</Th>
                   <Th>H. Viagem</Th>
                 </Tr>
@@ -422,6 +424,17 @@ export default function ConsultivePage({
                 {data?.purchaseOrder.skills.map((skill) => {
                   return (
                     <Tr key={skill.id}>
+                      <Td>
+                        {skill.id === data.skill.id ? (
+                          <Icon
+                            as={RiCheckboxCircleFill}
+                            fontSize="15"
+                            color="green.500"
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </Td>
                       <Td>
                         <Text>{skill.skill_description}</Text>
                       </Td>

@@ -47,7 +47,7 @@ import {
   GetConsultivesResponse,
   getConsultives,
 } from './useConsultives'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ConsultiveList from './ConsultiveList'
 import { HorizontalInput } from '@/app/components/Form/horizontalInput'
 import {
@@ -66,6 +66,8 @@ import {
   getPurchaseOrders,
 } from '../registrations/@purchase_orders/usePurchaseOrders'
 import { dirtyValues } from '@/utils/dirtyValues'
+import { HorizontalSelect } from '@/app/components/Form/horizontalSelect'
+import { stringToJavaScriptDate } from '@/utils/stringToJavaScriptDate'
 
 type ConsultiveFormData = {
   progressive?: string
@@ -73,12 +75,14 @@ type ConsultiveFormData = {
   po_number?: string
   job_number?: string
   isOffshore?: boolean
-  initial_at?: Date
-  finished_at?: Date
+  initial_at?: string
+  finished_at?: string
   technicianId?: string
   siteId?: string
   customerId?: string
   customerProjectManagerId?: string
+  purchaseOrderId?: string
+  skillId?: string
 }
 
 type FormProps = {
@@ -91,10 +95,29 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
   const toast = useToast()
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState, reset } = useForm({
+  const { register, handleSubmit, formState, reset, watch } = useForm({
     mode: 'onBlur',
     defaultValues: {
-      isOffshore: consultiveId ? consultive?.isOffshore : false,
+      intervention_number: consultiveId
+        ? consultive?.intervention_number
+        : '23INTB',
+      technicianId: consultiveId ? consultive?.technicianId : undefined,
+      siteId: consultiveId ? consultive?.siteId : undefined,
+      customerId: consultiveId ? consultive?.customerId : undefined,
+      customerProjectManagerId: consultiveId
+        ? consultive?.customerProjectManagerId
+        : undefined,
+      po_number: consultiveId ? consultive?.po_number : '',
+      job_number: consultiveId ? consultive?.job_number : '',
+      initial_at: consultiveId
+        ? stringToJavaScriptDate(consultive.initial_at)
+        : '',
+      finished_at: consultiveId
+        ? stringToJavaScriptDate(consultive.finished_at)
+        : '',
+      isOffshore: consultiveId ? consultive?.isOffshore : undefined,
+      purchaseOrderId: consultiveId ? consultive?.purchaseOrder.id : undefined,
+      skillId: consultiveId ? consultive?.skill.id : undefined,
     },
     resolver: yupResolver(
       consultiveId ? updateConsultiveFormSchema : createConsultiveFormSchema,
@@ -165,6 +188,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
   > = async (values) => {
     if (consultiveId) {
       const modifiedValues = dirtyValues(formState.dirtyFields, values)
+      console.log(modifiedValues)
       await updateConsultive.mutateAsync(modifiedValues)
     } else {
       await createConsultive.mutateAsync(values)
@@ -226,20 +250,22 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
     queryFn: () => getCustomers(page),
   }) as UseQueryResult<GetCustomersResponse, unknown>
 
-  const [, setSelectedCustomer] = useState(null)
   const [projectManagers, setProjectManagers] = useState([])
+  const customerId = watch('customerId')
 
-  const handleCustomerChange = async (e) => {
-    const selectedCustomerId = e.target.value
-    setSelectedCustomer(selectedCustomerId)
-
-    const { project_managers } = await getCustomer(selectedCustomerId)
-    setProjectManagers(project_managers)
-  }
+  useEffect(() => {
+    async function fetchProjectManagers() {
+      if (watch('customerId') !== undefined) {
+        const { project_managers } = await getCustomer(watch('customerId'))
+        setProjectManagers(project_managers)
+      }
+    }
+    fetchProjectManagers()
+  }, [watch, customerId])
 
   const [selectedIsOffshoreOption, setSelectedIsOffshoreOption] = useState<
     boolean | null
-  >(null)
+  >(false)
 
   const handleRadioChange = (value: string) => {
     setSelectedIsOffshoreOption(value === 'true')
@@ -250,22 +276,19 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
     queryFn: () => getPurchaseOrders(page),
   }) as UseQueryResult<GetPurchaseOrdersResponse, unknown>
 
-  const [, setSelectedPurchaseOrder] = useState(null)
   const [skills, setSkills] = useState([])
 
-  const handlePurchaseOrderChange = async (e) => {
-    const selectedPurchaseOrderId = e.target.value
-    if (selectedPurchaseOrderId !== '') {
-      setSelectedPurchaseOrder(selectedPurchaseOrderId)
+  const purchaseOrderId = watch('purchaseOrderId')
 
-      const { skills: purchaseOrderSkills } = await getPurchaseOrder(
-        selectedPurchaseOrderId,
-      )
-      setSkills(purchaseOrderSkills)
-    } else {
-      setSkills([])
+  useEffect(() => {
+    async function fetchSkills() {
+      if (purchaseOrderId !== undefined) {
+        const { skills } = await getPurchaseOrder(purchaseOrderId)
+        setSkills(skills)
+      }
     }
-  }
+    fetchSkills()
+  }, [watch, purchaseOrderId])
 
   return (
     <>
@@ -298,7 +321,9 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                   Ano Operativo:
                 </Text>
                 <Select borderRadius="4" size="xs" maxWidth="20">
-                  <option value="2023">2023</option>
+                  <option key={2023} value="2023">
+                    2023
+                  </option>
                 </Select>
               </Flex>
             </ModalHeader>
@@ -354,9 +379,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                           name="intervention_number"
                           label="Nº. Intervenção:"
                           type="name"
-                          value={data?.nextInterventionNumber}
                           error={errors.intervention_number}
-                          isReadOnly={true}
                         />
                       </Flex>
                       <Flex
@@ -380,27 +403,14 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                           margin="2"
                           borderColor="gray.500"
                         />
-                        <Flex
-                          marginBottom="2"
-                          flexDirection="row"
-                          justifyContent="space-between"
-                          alignItems="center"
-                          height={12}
-                          minWidth={52}
-                        >
-                          <Text marginRight="4" fontWeight="bold">
-                            Técnico:
-                          </Text>
-                          <Select
+                        <Flex marginBottom="2" height={12}>
+                          <HorizontalSelect
                             {...register('technicianId')}
                             name="technicianId"
-                            borderRadius="4"
-                            size="xs"
-                            maxWidth={36}
+                            label="Técnico:"
+                            error={errors.technicianId}
+                            placeholder="Selecione um técnico"
                           >
-                            <option key="default" value="">
-                              Selecione um técnico
-                            </option>
                             {techniciansData?.technicians.map((technician) => {
                               return (
                                 <option
@@ -411,35 +421,24 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                                 </option>
                               )
                             })}
-                          </Select>
+                          </HorizontalSelect>
                         </Flex>
-                        <Flex
-                          flexDirection="row"
-                          justifyContent="space-between"
-                          alignItems="center"
+
+                        <HorizontalSelect
+                          {...register('siteId')}
+                          name="siteId"
+                          label="Lugar:"
+                          error={errors.siteId}
+                          placeholder="Selecione um lugar"
                         >
-                          <Text marginRight="4" fontWeight="bold">
-                            Lugar:
-                          </Text>
-                          <Select
-                            {...register('siteId')}
-                            name="siteId"
-                            borderRadius="4"
-                            size="xs"
-                            maxWidth={36}
-                          >
-                            <option key="default" value="">
-                              Selecione um lugar
-                            </option>
-                            {sitesData?.sites.map((site) => {
-                              return (
-                                <option key={site.id} value={site.id}>
-                                  {site.description}
-                                </option>
-                              )
-                            })}
-                          </Select>
-                        </Flex>
+                          {sitesData?.sites.map((site) => {
+                            return (
+                              <option key={site.id} value={site.id}>
+                                {site.description}
+                              </option>
+                            )
+                          })}
+                        </HorizontalSelect>
                       </Flex>
                     </Flex>
                   </Flex>
@@ -475,66 +474,41 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                       minWidth={80}
                     >
                       <SimpleGrid columns={2} spacing={10}>
-                        <Flex
-                          flexDirection="row"
-                          justifyContent="space-around"
-                          alignItems="center"
+                        <HorizontalSelect
+                          {...register('customerId')}
+                          name="customerId"
+                          label="Cliente:"
+                          placeholder="Selecione um cliente"
+                          error={errors.customerId}
                         >
-                          {' '}
-                          <Text marginRight="4" fontWeight="bold">
-                            Cliente:
-                          </Text>
-                          <Select
-                            {...register('customerId')}
-                            name="customerId"
-                            borderRadius="4"
-                            size="xs"
-                            maxWidth={36}
-                            onChange={handleCustomerChange}
-                          >
-                            <option key="default" value="">
-                              Selecione um cliente
-                            </option>
-                            {customersData?.customers.map((customer) => {
-                              return (
-                                <option key={customer.id} value={customer.id}>
-                                  {customer.name}
-                                </option>
-                              )
-                            })}
-                          </Select>
-                        </Flex>
-                        <Flex
-                          flexDirection="row"
-                          justifyContent="space-around"
-                          alignItems="center"
+                          {customersData?.customers.map((customer) => {
+                            return (
+                              <option key={customer.id} value={customer.id}>
+                                {customer.name}
+                              </option>
+                            )
+                          })}
+                        </HorizontalSelect>
+
+                        <HorizontalSelect
+                          {...register('customerProjectManagerId')}
+                          name="customerProjectManagerId"
+                          label="Proj. Manager:"
+                          error={errors.customerProjectManagerId}
+                          placeholder="Selecione um gerente"
                         >
-                          {' '}
-                          <Text marginRight="4" fontWeight="bold">
-                            Project Manager:
-                          </Text>
-                          <Select
-                            {...register('customerProjectManagerId')}
-                            name="customerProjectManagerId"
-                            borderRadius="4"
-                            size="xs"
-                            maxWidth={36}
-                          >
-                            <option key="default" value="">
-                              Selecione um gerente
-                            </option>
-                            {projectManagers.map((project_manager) => {
-                              return (
-                                <option
-                                  key={project_manager.id}
-                                  value={project_manager.id}
-                                >
-                                  {project_manager.name}
-                                </option>
-                              )
-                            })}
-                          </Select>
-                        </Flex>
+                          {projectManagers.map((project_manager) => {
+                            return (
+                              <option
+                                key={project_manager.id}
+                                value={project_manager.id}
+                              >
+                                {project_manager.name}
+                              </option>
+                            )
+                          })}
+                        </HorizontalSelect>
+
                         <HorizontalInput
                           {...register('po_number')}
                           name="po_number"
@@ -595,7 +569,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                             {...register('initial_at')}
                             name="initial_at"
                             label="Data de início:"
-                            type="date"
+                            type="datetime-local"
                             error={errors.initial_at}
                           />
                         </Flex>
@@ -609,7 +583,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                             {...register('finished_at')}
                             name="finished_at"
                             label="Data fim:"
-                            type="date"
+                            type="datetime-local"
                             error={errors.finished_at}
                           />
                         </Flex>
@@ -696,57 +670,42 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                         borderColor="gray.500"
                       />
                       <Flex flexDirection="column">
-                        <Select
+                        <HorizontalSelect
                           {...register('purchaseOrderId')}
                           name="purchaseOrderId"
-                          borderRadius="4"
-                          size="xs"
-                          minWidth={80}
-                          onChange={handlePurchaseOrderChange}
-                          marginBottom="4"
+                          label="Purchase Order:"
+                          placeholder="Selecione uma P.O.:"
+                          error={errors.customerProjectManagerId}
                         >
-                          <option key="default" value="">
-                            Selecione uma P.O.
-                          </option>
                           {purchaseOrdersData?.purchase_orders.map(
                             (purchase_order) => {
                               return (
-                                <>
-                                  <option
-                                    key={purchase_order.id}
-                                    value={purchase_order.id}
-                                  >
-                                    {purchase_order.name}
-                                  </option>
-                                </>
+                                <option
+                                  key={purchase_order.id}
+                                  value={purchase_order.id}
+                                >
+                                  {purchase_order.name}
+                                </option>
                               )
                             },
                           )}
-                        </Select>
+                        </HorizontalSelect>
 
-                        <Text>Skills:</Text>
-                        <Flex
-                          border="1px"
-                          borderColor="gray.300"
-                          borderRadius="4"
-                          flexDirection="column"
-                          padding="2"
+                        <HorizontalSelect
+                          {...register('skillId')}
+                          name="skillId"
+                          label="Skills:"
+                          error={errors.skillId}
+                          placeholder="Selecione uma skill"
                         >
-                          {skills &&
-                            skills?.map((skill) => {
-                              return (
-                                <Flex
-                                  key={skill.id}
-                                  marginTop="2"
-                                  flexDirection="row"
-                                  justifyContent="space-between"
-                                >
-                                  <Text>{skill.skill_description}</Text>
-                                  <Text>{skill.normal_hour}</Text>
-                                </Flex>
-                              )
-                            })}
-                        </Flex>
+                          {skills.map((skill) => {
+                            return (
+                              <option key={skill.id} value={skill.id}>
+                                {skill.skill_description} - {skill.normal_hour}
+                              </option>
+                            )
+                          })}
+                        </HorizontalSelect>
                       </Flex>
                     </Flex>
                   </Flex>

@@ -16,7 +16,6 @@ import {
   Td,
   Tr,
   Text,
-  Checkbox,
   Icon,
   AvatarBadge,
 } from '@/app/components/chakraui'
@@ -39,9 +38,6 @@ export default function UsersTable() {
       {data?.users.map((user) => {
         return (
           <Tr key={user.id}>
-            <Td paddingX="6">
-              <Checkbox colorScheme="red" borderColor="gray.500" />
-            </Td>
             <Td>
               <Avatar name={user.name} src={avatarURL(user?.avatar)}>
                 {user?.role === 'ADMIN' ? (

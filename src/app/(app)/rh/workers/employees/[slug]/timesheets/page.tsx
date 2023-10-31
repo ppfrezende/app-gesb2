@@ -2,11 +2,9 @@
 
 import { TimeSheetReader } from '@/app/components/Form/TimeSheetReader/TimeSheetReader'
 
-import Link from 'next/link'
 import {
   Box,
   Flex,
-  Link as ChakraLink,
   Icon,
   Table,
   Thead,
@@ -16,6 +14,7 @@ import {
 } from '@/app/components/chakraui'
 import { RiArrowLeftLine } from '@/app/components/icons'
 import TimeSheetsTable from './TimeSheetsTable'
+import { useRouter } from 'next/navigation'
 
 export default function TimeSheetsList({
   params,
@@ -23,6 +22,7 @@ export default function TimeSheetsList({
   params: { slug: string }
 }) {
   const id = params.slug
+  const router = useRouter()
 
   return (
     <Flex flex="1" flexDirection="column">
@@ -33,9 +33,14 @@ export default function TimeSheetsList({
         boxShadow="0px 4px 10px rgba(0, 0, 0, 0.2)"
       >
         <Flex flexDirection="row" justifyContent="space-between">
-          <ChakraLink as={Link} href={`/workers/employees/${id}`}>
-            <Icon as={RiArrowLeftLine} fontSize="2xl" />
-          </ChakraLink>
+          <Icon
+            onClick={() => {
+              router.back()
+            }}
+            cursor="pointer"
+            as={RiArrowLeftLine}
+            fontSize="2xl"
+          />
 
           <Flex>
             <Box marginRight="4">

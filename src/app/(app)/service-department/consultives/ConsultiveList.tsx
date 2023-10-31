@@ -30,7 +30,7 @@ export default function ConsultiveList() {
   return (
     <>
       <Table size="sm" variant="simple">
-        <TableCaption>Apenas dados para consulta</TableCaption>
+        <TableCaption>T&T Sistemi Brasil</TableCaption>
         <Thead>
           <Tr>
             <TableHead>Prog.Cons.</TableHead>

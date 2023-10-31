@@ -2,6 +2,7 @@
 
 export {
   ChakraProvider,
+  Highlight,
   Button,
   Flex,
   Heading,

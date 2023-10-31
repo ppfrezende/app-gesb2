@@ -5,9 +5,9 @@ import {
   SelectProps as ChakraSelectInputProps,
   FormLabel,
   FormControl,
-  FormErrorMessage,
+  // FormErrorMessage,
   Flex,
-  Text,
+  // Text,
 } from '@/app/components/chakraui'
 import { FieldError } from 'react-hook-form'
 import { forwardRef, ForwardRefRenderFunction, ReactNode } from 'react'
@@ -26,7 +26,6 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
   return (
     <FormControl isInvalid={!!error}>
       <Flex
-        marginTop="2"
         flexDirection="row"
         justifyContent="space-between"
         alignItems="center"
@@ -58,11 +57,6 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
         >
           {children}
         </ChakraSelectInput>
-        {!!error && (
-          <FormErrorMessage>
-            <Text>{error.message}</Text>
-          </FormErrorMessage>
-        )}
       </Flex>
     </FormControl>
   )

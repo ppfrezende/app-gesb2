@@ -50,6 +50,9 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
           _hover={{
             bgColor: 'gray.200',
           }}
+          _readOnly={{
+            textColor: 'gray.400',
+          }}
           size="xs"
           ref={ref}
           width="auto"

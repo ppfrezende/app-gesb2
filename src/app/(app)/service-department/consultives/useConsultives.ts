@@ -6,6 +6,12 @@ type Site = {
   description: string
   isOffshore: boolean
 }
+type Skill = {
+  id: string
+  skill_description: string
+  normal_hour: number
+  travel_hour: number
+}
 
 type Technician = {
   id: string
@@ -43,12 +49,13 @@ export type Consultive = {
   Customer: Customer
   CustomerProjectManager: CustomerProjectManager
   PurchaseOrder: PurchaseOrder
+  Skill: Skill
 }
 
 export type ConsultiveResponse = {
   id: string
-  progressive: number
-  intervention_number: number
+  progressive: string
+  intervention_number: string
   po_number: string
   job_number: string
   isOffshore: boolean
@@ -98,6 +105,12 @@ export type ConsultiveResponse = {
       travel_hour?: number
       normal_hour?: number
     }[]
+  }
+  skill: {
+    id?: string
+    skill_description?: string
+    travel_hour?: number
+    normal_hour?: number
   }
   created_at: string
   userName: string
@@ -158,7 +171,7 @@ export async function getConsultives(
         name: consultive.Customer.name,
       },
       customerProjectManager: {
-        name: consultive.CustomerProjectManager.name,
+        name: consultive.CustomerProjectManager?.name,
       },
       purchaseOrder: {
         id: consultive.PurchaseOrder.id,
@@ -182,6 +195,12 @@ export async function getConsultives(
         currency: consultive.PurchaseOrder.currency,
         adictional: consultive.PurchaseOrder.adictional,
         skills: consultive.PurchaseOrder.skills,
+      },
+      skill: {
+        id: consultive.Skill.id,
+        skill_description: consultive.Skill.skill_description,
+        normal_hour: consultive.Skill.normal_hour,
+        travel_hour: consultive.Skill.travel_hour,
       },
 
       created_at: consultive.created_at,
@@ -255,7 +274,7 @@ export async function getConsultive(id: string): Promise<ConsultiveResponse> {
       name: data.consultive.Customer.name,
     },
     customerProjectManager: {
-      name: data.consultive.CustomerProjectManager.name,
+      name: data.consultive.CustomerProjectManager?.name,
     },
     purchaseOrder: {
       id: data.consultive.PurchaseOrder.id,
@@ -281,6 +300,12 @@ export async function getConsultive(id: string): Promise<ConsultiveResponse> {
       currency: data.consultive.PurchaseOrder.currency,
       adictional: data.consultive.PurchaseOrder.adictional,
       skills: data.consultive.PurchaseOrder.skills,
+    },
+    skill: {
+      id: data.consultive.Skill.id,
+      skill_description: data.consultive.Skill.skill_description,
+      normal_hour: data.consultive.Skill.normal_hour,
+      travel_hour: data.consultive.Skill.travel_hour,
     },
 
     created_at: new Date(data.consultive.created_at).toLocaleDateString(

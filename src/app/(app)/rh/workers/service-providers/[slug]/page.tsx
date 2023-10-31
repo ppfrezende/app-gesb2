@@ -48,7 +48,7 @@ export default function ServiceProviderPage({
     <Flex flex="1" flexDirection="column">
       <Box borderRadius="8" bg="gray.200" padding="8">
         <Flex flexDirection="row" justifyContent="space-between">
-          <ChakraLink as={Link} href={'/registrations'}>
+          <ChakraLink as={Link} href={'/rh/registrations'}>
             <Icon as={RiArrowLeftLine} fontSize="2xl" />
           </ChakraLink>
 

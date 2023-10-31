@@ -50,7 +50,7 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
         boxShadow="0px 4px 4px rgba(0, 0, 0, 0.15)"
       >
         <Flex flexDirection="row" justifyContent="space-between">
-          <ChakraLink as={Link} href={'/registrations'}>
+          <ChakraLink as={Link} href={'/rh/registrations'}>
             <Icon as={RiArrowLeftLine} fontSize="2xl" />
           </ChakraLink>
 

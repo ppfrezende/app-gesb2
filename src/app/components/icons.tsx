@@ -39,6 +39,7 @@ export {
   RiFileExcel2Line,
   RiFileAddLine,
   RiUserVoiceFill,
+  RiCheckboxCircleFill,
 } from 'react-icons/ri'
 
 export {

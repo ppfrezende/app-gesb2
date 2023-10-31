@@ -30,7 +30,7 @@ export default function ConsultivesTable() {
   }) as UseQueryResult<GetConsultivesResponse, unknown>
   return (
     <>
-      {data.consultives.map((consultive) => {
+      {data?.consultives.map((consultive) => {
         return (
           <Tr key={consultive.id}>
             <Td paddingX="6">
@@ -101,7 +101,7 @@ export default function ConsultivesTable() {
             <Td>
               <Button
                 as="a"
-                href={`service-department/consultives/${consultive.id}`}
+                href={`/service-department/consultives/${consultive.id}`}
                 size="sm"
                 fontSize="sm"
                 fontWeight="normal"
