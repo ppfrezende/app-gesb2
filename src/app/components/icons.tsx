@@ -40,6 +40,7 @@ export {
   RiFileAddLine,
   RiUserVoiceFill,
   RiCheckboxCircleFill,
+  RiArrowRightUpFill,
 } from 'react-icons/ri'
 
 export {
@@ -48,4 +49,6 @@ export {
   FcSalesPerformance,
   FcBarChart,
   FcDisapprove,
+  FcBullish,
+  FcBearish,
 } from 'react-icons/fc'

@@ -21,7 +21,6 @@ export default function TimeSheetsTable({ technician_id }: TimeSheetListProps) {
   const { data } = useQuery({
     queryKey: ['timesheet', technician_id, page],
     queryFn: () => getTimeSheetsByTechId(technician_id, page),
-    staleTime: 60000,
   }) as UseQueryResult<GetTimeSheetResponse, unknown>
 
   return (
@@ -52,9 +51,7 @@ export default function TimeSheetsTable({ technician_id }: TimeSheetListProps) {
                 )}
               </Text>
             </Td>
-            <Td>
-              <Text>{timesheet.technician_name}</Text>
-            </Td>
+
             <Td>
               <Text>{timesheet.created_at}</Text>
             </Td>

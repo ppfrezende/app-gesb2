@@ -24,7 +24,7 @@ type TimesheetDay = {
   rangeCto: number
   rangeDfrom: number
   rangeDto: number
-  on_offshore: boolean
+  isOffshore: boolean
   technician_id: string
   timeSheetDataId: string
   userName: string
@@ -151,21 +151,9 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
               </Td>
               <Td maxWidth="4">
                 <Box>
-                  <Text>{timesheetday.on_offshore}</Text>
-                  {/* <Input
-                  {...register(`on_offshore.${index}.__EMPTY_25`)}
-                  name={`on_offshore.${index}.__EMPTY_25`}
-                  border="none"
-                  size="12"
-                  borderRadius="4"
-                  focusBorderColor="gray.300"
-                  bgColor="gray.100"
-                  _hover={{
-                    bgColor: 'gray.300',
-                  }}
-                  width="16"
-                  padding="2px"
-                /> */}
+                  <Text>
+                    {timesheetday.isOffshore === true ? 'OffShore' : 'OnShore'}
+                  </Text>
                 </Box>
               </Td>
             </Tr>

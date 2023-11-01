@@ -14,7 +14,7 @@ export type TimesheetDay = {
   rangeCto: number
   rangeDfrom: number
   rangeDto: number
-  on_offshore: boolean
+  isOffshore: boolean
   technician_id: string
   timeSheetDataId: string
   userName: string
@@ -245,7 +245,7 @@ export async function getTimeSheet(
         rangeCto: convertDecimalToHour(day.rangeCto),
         rangeDfrom: convertDecimalToHour(day.rangeDfrom),
         rangeDto: convertDecimalToHour(day.rangeDto),
-        on_offshore: day.on_offshore === true ? 'OnShore' : 'OffShore',
+        on_offshore: day.isOffshore === true ? 'OffShore' : 'OnShore',
         technician_id: day.technician_id,
         timeSheetDataId: day.timeSheetDataId,
         userName: day.userName,

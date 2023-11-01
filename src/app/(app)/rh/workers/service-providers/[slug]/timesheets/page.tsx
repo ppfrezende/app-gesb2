@@ -15,6 +15,11 @@ import {
 import { RiArrowLeftLine } from '@/app/components/icons'
 import TimeSheetsTable from './TimeSheetsTable'
 import { useRouter } from 'next/navigation'
+import { UseQueryResult, useQuery } from '@tanstack/react-query'
+import {
+  ServiceProvider,
+  getServiceProvider,
+} from '@/app/(app)/rh/registrations/@service_providers/useServiceProviders'
 
 export default function TimeSheetsList({
   params,
@@ -23,6 +28,11 @@ export default function TimeSheetsList({
 }) {
   const id = params.slug
   const router = useRouter()
+
+  const { data } = useQuery({
+    queryKey: ['service-provider', id],
+    queryFn: () => getServiceProvider(id),
+  }) as UseQueryResult<ServiceProvider, unknown>
 
   return (
     <Flex flex="1" flexDirection="column">
@@ -44,7 +54,10 @@ export default function TimeSheetsList({
 
           <Flex>
             <Box marginRight="4">
-              <TimeSheetReader technician_id={id} />
+              <TimeSheetReader
+                technician_id={id}
+                technician_name={data?.name}
+              />
             </Box>
           </Flex>
         </Flex>

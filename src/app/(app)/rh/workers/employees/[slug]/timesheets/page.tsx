@@ -11,10 +11,16 @@ import {
   Tr,
   Th,
   Tbody,
+  Text,
 } from '@/app/components/chakraui'
 import { RiArrowLeftLine } from '@/app/components/icons'
 import TimeSheetsTable from './TimeSheetsTable'
 import { useRouter } from 'next/navigation'
+import { UseQueryResult, useQuery } from '@tanstack/react-query'
+import {
+  Employee,
+  getEmployee,
+} from '@/app/(app)/rh/registrations/@employees/useEmployees'
 
 export default function TimeSheetsList({
   params,
@@ -24,6 +30,11 @@ export default function TimeSheetsList({
   const id = params.slug
   const router = useRouter()
 
+  const { data } = useQuery({
+    queryKey: ['employee', id],
+    queryFn: () => getEmployee(id),
+  }) as UseQueryResult<Employee, unknown>
+
   return (
     <Flex flex="1" flexDirection="column">
       <Box
@@ -32,7 +43,11 @@ export default function TimeSheetsList({
         padding="6"
         boxShadow="0px 4px 10px rgba(0, 0, 0, 0.2)"
       >
-        <Flex flexDirection="row" justifyContent="space-between">
+        <Flex
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Icon
             onClick={() => {
               router.back()
@@ -44,18 +59,26 @@ export default function TimeSheetsList({
 
           <Flex>
             <Box marginRight="4">
-              <TimeSheetReader technician_id={id} />
+              <TimeSheetReader
+                technician_id={id}
+                technician_name={data?.name}
+              />
             </Box>
           </Flex>
         </Flex>
       </Box>
-      <Box
+      <Flex
         marginTop="4"
         borderRadius="8"
         bg="gray.200"
         padding="6"
         boxShadow="0px 4px 10px rgba(0, 0, 0, 0.2)"
+        flexDirection="column"
+        alignItems="center"
       >
+        <Text fontWeight="bold" fontSize="lg" marginBottom="4">
+          {data.name}
+        </Text>
         <Table colorScheme="blackAlpha">
           <Thead>
             <Tr>
@@ -63,7 +86,6 @@ export default function TimeSheetsList({
               <Th>Site</Th>
               <Th>Horas Normais</Th>
               <Th>Horas Extras</Th>
-              <Th>Técnico</Th>
               <Th>Data</Th>
             </Tr>
           </Thead>
@@ -71,7 +93,7 @@ export default function TimeSheetsList({
             <TimeSheetsTable technician_id={id} />
           </Tbody>
         </Table>
-      </Box>
+      </Flex>
     </Flex>
   )
 }

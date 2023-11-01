@@ -13,6 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
   useDisclosure,
   useToast,
 } from '@/app/components/chakraui'
@@ -55,6 +56,7 @@ type TimeSheetData = {
 
 type TimeSheetReaderProps = {
   technician_id: string
+  technician_name: string
 }
 
 interface BasicInformation {
@@ -85,8 +87,12 @@ interface TimeSheetValues {
   dayHoursDataArray: DayHoursData
 }
 
-export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
+export function TimeSheetReader({
+  technician_id,
+  technician_name,
+}: TimeSheetReaderProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   const toast = useToast()
 
   const {
@@ -112,14 +118,14 @@ export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
       try {
         await api.post(`/technicians/${technician_id}/timesheet`, data)
 
-        closeModalAndReset()
+        closeModalandAddToast()
       } catch (err) {
         toastError()
       }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['timesheets'] })
+        queryClient.invalidateQueries({ queryKey: ['timesheet'] })
       },
     },
   )
@@ -146,6 +152,16 @@ export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
   function closeModalAndReset() {
     onClose()
     setFileData([])
+  }
+
+  function closeModalandAddToast() {
+    onClose()
+    toast({
+      title: 'Timesheet importado com sucesso.',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    })
   }
 
   function toastError() {
@@ -258,39 +274,45 @@ export function TimeSheetReader({ technician_id }: TimeSheetReaderProps) {
           <ModalContent>
             <FileUploader onChange={handleTimeSheetUpload} />
             {fileData && fileData?.length !== 0 ? (
-              <>
-                <ModalHeader>
-                  <TechnicianInfo
-                    technicianName={technicianName}
-                    firstDate={firstDate}
-                    secondDate={secondDate}
-                    site={site}
-                  />
-                </ModalHeader>
-                <ModalBody>
-                  <TimeSheetForm fileData={fileData} register={register} />
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    onClick={closeModalAndReset}
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="gray"
-                    cursor="pointer"
-                    leftIcon={<Icon as={RiDeleteBackLine} fontSize="20" />}
-                  >
-                    Cancelar
-                  </Button>
-                  <PositiveButton
-                    marginLeft="4"
-                    type="submit"
-                    isLoading={isSubmitting}
-                    leftIcon={<Icon as={RiAddLine} fontSize="20" />}
-                  >
-                    Salvar
-                  </PositiveButton>
-                </ModalFooter>
-              </>
+              technicianName !== technician_name ? (
+                <Text margin="4" fontSize="lg" color="red">
+                  {`*** Timesheet não pertence ao ${technician_name}`}
+                </Text>
+              ) : (
+                <>
+                  <ModalHeader>
+                    <TechnicianInfo
+                      technicianName={technicianName}
+                      firstDate={firstDate}
+                      secondDate={secondDate}
+                      site={site}
+                    />
+                  </ModalHeader>
+                  <ModalBody>
+                    <TimeSheetForm fileData={fileData} register={register} />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      onClick={closeModalAndReset}
+                      size="sm"
+                      fontSize="sm"
+                      colorScheme="gray"
+                      cursor="pointer"
+                      leftIcon={<Icon as={RiDeleteBackLine} fontSize="20" />}
+                    >
+                      Cancelar
+                    </Button>
+                    <PositiveButton
+                      marginLeft="4"
+                      type="submit"
+                      isLoading={isSubmitting}
+                      leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                    >
+                      Salvar
+                    </PositiveButton>
+                  </ModalFooter>
+                </>
+              )
             ) : (
               <></>
             )}

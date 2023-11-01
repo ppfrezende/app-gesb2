@@ -22,11 +22,10 @@ export default function TimeSheetPage({
   const router = useRouter()
 
   const { data } = useQuery({
-    queryKey: ['timesheetdata', id],
+    queryKey: ['timesheet', id],
     queryFn: () => getTimeSheet(id),
   }) as UseQueryResult<TimeSheetData, unknown>
 
-  console.log(data)
   return (
     <Flex flex="1" flexDirection="column">
       <Box
