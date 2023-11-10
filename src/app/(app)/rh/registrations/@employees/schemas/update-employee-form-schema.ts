@@ -1,15 +1,11 @@
 import * as yup from 'yup'
 
 export const updateEmployeeFormSchema = yup.object({
-  avatar: yup.mixed().nullable(),
   name: yup.string(),
   cpf: yup.string(),
   rg: yup.string(),
   email: yup.string().email('E-mail inválido'),
-  admission_at: yup
-    .date()
-    .nullable()
-    .transform((curr, orig) => (orig === '' ? null : curr)),
+  admission_at: yup.date().nullable(),
   phone: yup.string(),
   cep: yup.string(),
   street: yup.string(),

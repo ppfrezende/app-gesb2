@@ -113,6 +113,7 @@ export function InterventionForm({
         ? intervention?.intervention_number
         : '23INTB',
       technicianId: interventionId ? intervention?.technicianId : undefined,
+
       siteId: interventionId ? intervention?.siteId : undefined,
       customerId: interventionId ? intervention?.customerId : undefined,
       customerProjectManagerId: interventionId

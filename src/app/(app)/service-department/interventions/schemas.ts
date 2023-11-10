@@ -6,9 +6,14 @@ export const createInterventionFormSchema = yup.object({
   po_number: yup.string().required('Campo Obrigatório'),
   job_number: yup.string().required('Campo Obrigatório'),
   isOffshore: yup.boolean().required('Campo Obrigatório'),
-  initial_at: yup.date().typeError('Campo Obrigatório'),
+  initial_at: yup
+    .string()
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : new Date(originalValue),
+    )
+    .typeError('Campo Obrigatório'),
   finished_at: yup
-    .date()
+    .string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr)),
   // finished_at: yup
@@ -30,11 +35,13 @@ export const updateInterventionFormSchema = yup.object({
   job_number: yup.string().optional(),
   isOffshore: yup.boolean().optional(),
   initial_at: yup
-    .date()
+    .string()
     .nullable()
-    .transform((curr, orig) => (orig === '' ? null : curr)),
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : new Date(originalValue),
+    ),
   finished_at: yup
-    .date()
+    .string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr)),
   // finished_at: yup

@@ -1,4 +1,5 @@
 import { api } from '@/services/apiClient'
+import { formatDateToDDMMYYYY } from '@/utils/stringToJavaScriptDate'
 
 export type Employee = {
   id: string
@@ -94,13 +95,6 @@ export async function getEmployee(id: string): Promise<Employee> {
       style: 'currency',
       currency: 'BRL',
     }),
-    admission_at: new Date(data.employee.admission_at).toLocaleDateString(
-      'pt-BR',
-      {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      },
-    ),
+    admission_at: formatDateToDDMMYYYY(data.employee.admission_at),
   }
 }

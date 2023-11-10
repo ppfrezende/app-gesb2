@@ -1,6 +1,6 @@
 import { api } from '@/services/apiClient'
 import { convertDecimalToHour } from '@/utils/hourConverter'
-import { formatDateToDDMMYYYY } from '@/utils/stringToJavaScriptDate'
+import { formatDateToDDMMYY } from '@/utils/stringToJavaScriptDate'
 
 export type TimesheetDay = {
   id: string
@@ -91,8 +91,8 @@ export const getTimeSheets = async (
 
       return {
         id: timesheet.id,
-        first_date: formatDateToDDMMYYYY(timesheet.first_date),
-        second_date: formatDateToDDMMYYYY(timesheet.second_date),
+        first_date: formatDateToDDMMYY(timesheet.first_date),
+        second_date: formatDateToDDMMYY(timesheet.second_date),
         departure_date: timesheet.departure_date,
         arrival_date: timesheet.arrival_date,
         traveled_hours: timesheet.traveled_hours,
@@ -140,8 +140,8 @@ export const getTimeSheetsByTechId = async (
 
       return {
         id: timesheet.id,
-        first_date: formatDateToDDMMYYYY(timesheet.first_date),
-        second_date: formatDateToDDMMYYYY(timesheet.second_date),
+        first_date: formatDateToDDMMYY(timesheet.first_date),
+        second_date: formatDateToDDMMYY(timesheet.second_date),
         departure_date: timesheet.departure_date,
         arrival_date: timesheet.arrival_date,
         traveled_hours: timesheet.traveled_hours,
@@ -224,8 +224,8 @@ export async function getTimeSheet(
 
     return {
       id: data.timesheetdata.id,
-      first_date: formatDateToDDMMYYYY(data.timesheetdata.first_date),
-      second_date: formatDateToDDMMYYYY(data.timesheetdata.second_date),
+      first_date: formatDateToDDMMYY(data.timesheetdata.first_date),
+      second_date: formatDateToDDMMYY(data.timesheetdata.second_date),
       departure_date: data.timesheetdata.departure_date,
       arrival_date: data.timesheetdata.arrival_date,
       traveled_hours: data.timesheetdata.traveled_hours,
@@ -244,7 +244,7 @@ export async function getTimeSheet(
       timesheetdays: data.timesheetdata.timesheetdays.map(
         (day: TimesheetDay) => ({
           id: day.id,
-          day: formatDateToDDMMYYYY(day.day),
+          day: formatDateToDDMMYY(day.day),
           departure: convertDecimalToHour(day.departure),
           arrival: convertDecimalToHour(day.arrival),
           rangeAfrom: convertDecimalToHour(day.rangeAfrom),

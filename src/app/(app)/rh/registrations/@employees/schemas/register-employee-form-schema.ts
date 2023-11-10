@@ -9,7 +9,7 @@ export const registerEmployeeFormSchema = yup
       .string()
       .email('E-mail inválido')
       .required('O e-mail é obrigatório'),
-    admission_at: yup.date().typeError('A data de admissão é obrigatória'),
+    admission_at: yup.date().nullable(),
     phone: yup.string().required('O telefone é obrigatório'),
     cep: yup.string().required('O CEP é obrigatório'),
     street: yup.string().required('O endereço é obrigatório'),
