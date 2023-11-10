@@ -16,10 +16,10 @@ export async function generateMetadata({
 }: ParamsProps): Promise<Metadata> {
   const id = params.slug
 
-  const { data } = await api.get(`consultives/${id}`)
+  const { data } = await api.get(`interventions/${id}`)
 
   return {
-    title: `${data.consultive.progressive} | GESB 2.0`,
+    title: `${data.intervention.progressive} | GESB 2.0`,
   }
 }
 

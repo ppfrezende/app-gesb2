@@ -1,5 +1,6 @@
 import { api } from '@/services/apiClient'
 import { convertDecimalToHour } from '@/utils/hourConverter'
+import { formatDateToDDMMYYYY } from '@/utils/stringToJavaScriptDate'
 
 export type TimesheetDay = {
   id: string
@@ -22,6 +23,8 @@ export type TimesheetDay = {
 
 export type TimeSheetData = {
   id: string
+  first_date: string
+  second_date: string
   departure_date: string
   arrival_date: string
   traveled_hours: number
@@ -42,6 +45,8 @@ export type TimeSheetData = {
 
 export type TimeSheet = {
   id: string
+  first_date: string
+  second_date: string
   departure_date: string
   arrival_date: string
   traveled_hours: number
@@ -54,7 +59,7 @@ export type TimeSheet = {
   technician_email: string
   intervention_description: string
   site: string
-  international_allowance: boolean
+  isInternational: boolean
   created_at: string
   userName: string
 }
@@ -86,6 +91,8 @@ export const getTimeSheets = async (
 
       return {
         id: timesheet.id,
+        first_date: formatDateToDDMMYYYY(timesheet.first_date),
+        second_date: formatDateToDDMMYYYY(timesheet.second_date),
         departure_date: timesheet.departure_date,
         arrival_date: timesheet.arrival_date,
         traveled_hours: timesheet.traveled_hours,
@@ -98,7 +105,7 @@ export const getTimeSheets = async (
         technician_email: email,
         intervention_description: timesheet.intervention_description,
         site: timesheet.site,
-        international_allowance: timesheet.international_allowance,
+        international_allowance: timesheet.isInternational,
         created_at: new Date(timesheet.created_at).toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: 'long',
@@ -133,6 +140,8 @@ export const getTimeSheetsByTechId = async (
 
       return {
         id: timesheet.id,
+        first_date: formatDateToDDMMYYYY(timesheet.first_date),
+        second_date: formatDateToDDMMYYYY(timesheet.second_date),
         departure_date: timesheet.departure_date,
         arrival_date: timesheet.arrival_date,
         traveled_hours: timesheet.traveled_hours,
@@ -145,7 +154,7 @@ export const getTimeSheetsByTechId = async (
         technician_email: email,
         intervention_description: timesheet.intervention_description,
         site: timesheet.site,
-        international_allowance: timesheet.international_allowance,
+        international_allowance: timesheet.isInternational,
         created_at: new Date(timesheet.created_at).toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: 'long',
@@ -207,49 +216,53 @@ export async function getTechnician(
 export async function getTimeSheet(
   timesheetdataId: string,
 ): Promise<TimeSheetData> {
-  const { data } = await api.get(`/timesheet/data/${timesheetdataId}`)
-  const { name, email } = await getTechnician(data.timesheetdata.technician_id)
+  try {
+    const { data } = await api.get(`/timesheet/data/${timesheetdataId}`)
+    const { name, email } = await getTechnician(
+      data.timesheetdata.technician_id,
+    )
 
-  return {
-    id: data.timesheetdata.id,
-    departure_date: data.timesheetdata.departure_date,
-    arrival_date: data.timesheetdata.arrival_date,
-    traveled_hours: data.timesheetdata.traveled_hours,
-    normal_hours_range_A: data.timesheetdata.normal_hours_range_A,
-    normal_hours_range_B: data.timesheetdata.normal_hours_range_B,
-    extra_hours_range_C: data.timesheetdata.extra_hours_range_C,
-    extra_hours_range_D: data.timesheetdata.extra_hours_range_D,
-    technician_id: data.timesheetdata.technician_id,
-    technician_name: name,
-    technician_email: email,
-    intervention_description: data.timesheetdata.intervention_description,
-    site: data.timesheetdata.site,
-    international_allowance: data.timesheetdata.international_allowance,
-    created_at: data.timesheetdata.created_at,
-    userName: data.timesheetdata.userName,
-    timesheetdays: data.timesheetdata.timesheetdays.map(
-      (day: TimesheetDay) => ({
-        id: day.id,
-        day: new Date(day.day).toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: '2-digit',
+    return {
+      id: data.timesheetdata.id,
+      first_date: formatDateToDDMMYYYY(data.timesheetdata.first_date),
+      second_date: formatDateToDDMMYYYY(data.timesheetdata.second_date),
+      departure_date: data.timesheetdata.departure_date,
+      arrival_date: data.timesheetdata.arrival_date,
+      traveled_hours: data.timesheetdata.traveled_hours,
+      normal_hours_range_A: data.timesheetdata.normal_hours_range_A,
+      normal_hours_range_B: data.timesheetdata.normal_hours_range_B,
+      extra_hours_range_C: data.timesheetdata.extra_hours_range_C,
+      extra_hours_range_D: data.timesheetdata.extra_hours_range_D,
+      technician_id: data.timesheetdata.technician_id,
+      technician_name: name,
+      technician_email: email,
+      intervention_description: data.timesheetdata.intervention_description,
+      site: data.timesheetdata.site,
+      international_allowance: data.timesheetdata.international_allowance,
+      created_at: data.timesheetdata.created_at,
+      userName: data.timesheetdata.userName,
+      timesheetdays: data.timesheetdata.timesheetdays.map(
+        (day: TimesheetDay) => ({
+          id: day.id,
+          day: formatDateToDDMMYYYY(day.day),
+          departure: convertDecimalToHour(day.departure),
+          arrival: convertDecimalToHour(day.arrival),
+          rangeAfrom: convertDecimalToHour(day.rangeAfrom),
+          rangeAto: convertDecimalToHour(day.rangeAto),
+          rangeBfrom: convertDecimalToHour(day.rangeBfrom),
+          rangeBto: convertDecimalToHour(day.rangeBto),
+          rangeCfrom: convertDecimalToHour(day.rangeCfrom),
+          rangeCto: convertDecimalToHour(day.rangeCto),
+          rangeDfrom: convertDecimalToHour(day.rangeDfrom),
+          rangeDto: convertDecimalToHour(day.rangeDto),
+          on_offshore: day.isOffshore === true ? 'OffShore' : 'OnShore',
+          technician_id: day.technician_id,
+          timeSheetDataId: day.timeSheetDataId,
+          userName: day.userName,
         }),
-        departure: convertDecimalToHour(day.departure),
-        arrival: convertDecimalToHour(day.arrival),
-        rangeAfrom: convertDecimalToHour(day.rangeAfrom),
-        rangeAto: convertDecimalToHour(day.rangeAto),
-        rangeBfrom: convertDecimalToHour(day.rangeBfrom),
-        rangeBto: convertDecimalToHour(day.rangeBto),
-        rangeCfrom: convertDecimalToHour(day.rangeCfrom),
-        rangeCto: convertDecimalToHour(day.rangeCto),
-        rangeDfrom: convertDecimalToHour(day.rangeDfrom),
-        rangeDto: convertDecimalToHour(day.rangeDto),
-        on_offshore: day.isOffshore === true ? 'OffShore' : 'OnShore',
-        technician_id: day.technician_id,
-        timeSheetDataId: day.timeSheetDataId,
-        userName: day.userName,
-      }),
-    ),
+      ),
+    }
+  } catch (err) {
+    return null
   }
 }

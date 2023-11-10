@@ -1,13 +1,16 @@
 import * as yup from 'yup'
 
-export const createConsultiveFormSchema = yup.object({
+export const createInterventionFormSchema = yup.object({
   progressive: yup.string().required('Campo Obrigatório'),
   intervention_number: yup.string().required('Campo Obrigatório'),
   po_number: yup.string().required('Campo Obrigatório'),
   job_number: yup.string().required('Campo Obrigatório'),
   isOffshore: yup.boolean().required('Campo Obrigatório'),
-  initial_at: yup.string().typeError('Campo obrigatório'),
-  finished_at: yup.string().typeError('Campo obrigatório'),
+  initial_at: yup.date().typeError('Campo Obrigatório'),
+  finished_at: yup
+    .date()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr)),
   // finished_at: yup
   //   .string()
   //   .nullable()
@@ -20,14 +23,20 @@ export const createConsultiveFormSchema = yup.object({
   skillId: yup.string(),
 })
 
-export const updateConsultiveFormSchema = yup.object({
+export const updateInterventionFormSchema = yup.object({
   progressive: yup.string().optional(),
   intervention_number: yup.string().optional(),
   po_number: yup.string().optional(),
   job_number: yup.string().optional(),
   isOffshore: yup.boolean().optional(),
-  initial_at: yup.string().optional(),
-  finished_at: yup.string().optional(),
+  initial_at: yup
+    .date()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr)),
+  finished_at: yup
+    .date()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr)),
   // finished_at: yup
   //   .string()
   //   .nullable()

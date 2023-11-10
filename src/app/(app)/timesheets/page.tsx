@@ -34,7 +34,7 @@ export default function AllTimeSheetsList() {
               <Th>Horas Normais</Th>
               <Th>Horas Extras</Th>
               <Th>Técnico</Th>
-              <Th>Data</Th>
+              <Th>Período</Th>
             </Tr>
           </Thead>
           <Tbody>

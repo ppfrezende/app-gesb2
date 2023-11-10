@@ -19,20 +19,20 @@ import { RiEdit2Line } from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useState } from 'react'
 import Link from 'next/link'
-import { GetConsultivesResponse, getConsultives } from './useConsultives'
+import { GetInterventionsResponse, getInterventions } from './useInterventions'
 
-export default function ConsultivesTable() {
+export default function InterventionsTable() {
   const [page] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['consultive', page],
-    queryFn: () => getConsultives(page),
-  }) as UseQueryResult<GetConsultivesResponse, unknown>
+    queryKey: ['intervention', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
   return (
     <>
-      {data?.consultives.map((consultive) => {
+      {data?.interventions.map((intervention) => {
         return (
-          <Tr key={consultive.id}>
+          <Tr key={intervention.id}>
             <Td paddingX="6">
               <Popover
                 arrowSize={10}
@@ -43,8 +43,11 @@ export default function ConsultivesTable() {
               >
                 <PopoverTrigger>
                   <Box>
-                    <ChakraLink as={Link} href={`consultives/${consultive.id}`}>
-                      <Text fontWeight="bold">{consultive.progressive}</Text>
+                    <ChakraLink
+                      as={Link}
+                      href={`interventions/${intervention.id}`}
+                    >
+                      <Text fontWeight="bold">{intervention.progressive}</Text>
                     </ChakraLink>
                   </Box>
                 </PopoverTrigger>
@@ -55,27 +58,27 @@ export default function ConsultivesTable() {
                   <PopoverBody>
                     <Text>
                       <strong>Pros. Cons.: </strong>
-                      {consultive.progressive}
+                      {intervention.progressive}
                     </Text>
                     <Text>
                       <strong>Nº Interv.: </strong>
-                      {consultive.intervention_number}
+                      {intervention.intervention_number}
                     </Text>
                     <Text>
                       <strong>Nº P.O.: </strong>
-                      {consultive.po_number}
+                      {intervention.po_number}
                     </Text>
                     <Text>
                       <strong>Job Number: </strong>
-                      {consultive.job_number}
+                      {intervention.job_number}
                     </Text>
                     <Text>
                       <strong>Data de criação: </strong>
-                      {consultive.created_at}
+                      {intervention.created_at}
                     </Text>
                     <Text fontSize="9px">
                       <strong>Criado por: </strong>
-                      {consultive.userName}
+                      {intervention.userName}
                     </Text>
                   </PopoverBody>
                 </PopoverContent>
@@ -83,25 +86,31 @@ export default function ConsultivesTable() {
             </Td>
 
             <Td>
-              <Text>{consultive.intervention_number}</Text>
+              <Text>{intervention.intervention_number}</Text>
             </Td>
             <Td>
-              <Text>{consultive.site.description}</Text>
+              <Text>{intervention.site.description}</Text>
             </Td>
             <Td>
-              <Text>{consultive.technician.name}</Text>
+              <Text>{intervention.technician.name}</Text>
             </Td>
             <Td>
-              <Text>{consultive.initial_at}</Text>
+              <Text>{intervention.initial_at}</Text>
             </Td>
             <Td>
-              <Text>{consultive.finished_at}</Text>
+              {intervention.finished_at === 'Em andamento...' ? (
+                <Text color="red" fontStyle="italic">
+                  {intervention.finished_at}
+                </Text>
+              ) : (
+                <Text>{intervention.finished_at}</Text>
+              )}
             </Td>
 
             <Td>
               <Button
-                as="a"
-                href={`/service-department/consultives/${consultive.id}`}
+                as={Link}
+                href={`/service-department/interventions/${intervention.id}`}
                 size="sm"
                 fontSize="sm"
                 fontWeight="normal"

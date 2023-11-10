@@ -3,6 +3,10 @@
 import { ChangeEvent, useState } from 'react'
 import * as XLSX from 'xlsx'
 
+type JSONQuizenalVerifyType = {
+  __EMPTY_1: string
+}
+
 type BasicInformation = {
   __EMPTY_3?: string
   __EMPTY_10?: string
@@ -33,7 +37,13 @@ export default function useTimeSheetUpload() {
           const sheet = workbook.Sheets[sheetName]
           const json = XLSX.utils.sheet_to_json(sheet)
 
-          const dayHoursWorkedArray = json.slice(12, 27)
+          let dayHoursWorkedArray = []
+
+          if ((json[27] as JSONQuizenalVerifyType).__EMPTY_1 === '') {
+            dayHoursWorkedArray = json.slice(12, 27)
+          } else {
+            dayHoursWorkedArray = json.slice(12, 28)
+          }
 
           const basicInformationArray: BasicInformation[] = json.slice(1, 6)
 

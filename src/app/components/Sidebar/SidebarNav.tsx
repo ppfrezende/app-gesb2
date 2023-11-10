@@ -8,6 +8,8 @@ import {
   RiCompasses2Line,
   RiProfileLine,
   RiFileExcel2Line,
+  RiMoneyDollarCircleLine,
+  RiBarChart2Line,
 } from '@/app/components/icons'
 
 export function SidebarNav() {
@@ -52,9 +54,9 @@ export function SidebarNav() {
         <NavLink
           marginLeft="2"
           icon={RiCompasses2Line}
-          href="/service-department/consultives"
+          href="/service-department/interventions"
         >
-          Consultivos
+          Intervenções
         </NavLink>
         <NavLink
           marginLeft="2"
@@ -81,19 +83,19 @@ export function SidebarNav() {
         border="1px"
         borderColor="gray.300"
         borderRadius={8}
-        color="gray.300"
       >
         <Text marginBottom="-2" fontSize="lg" fontWeight="bold">
           FINANCEIRO
         </Text>
-        <NavLink marginLeft="2" icon={RiProfileLine} href="#">
-          InVoices
+        <NavLink
+          marginLeft="2"
+          icon={RiBarChart2Line}
+          href="/finance-department/consultives"
+        >
+          Consultivos
         </NavLink>
-        <NavLink marginLeft="2" icon={RiCompasses2Line} href="#">
-          Contas a pagar
-        </NavLink>
-        <NavLink marginLeft="2" icon={RiFileExcel2Line} href="#">
-          Contas a receber
+        <NavLink marginLeft="2" icon={RiMoneyDollarCircleLine} href="#">
+          Folha Funcionários
         </NavLink>
       </NavSection>
     </Stack>

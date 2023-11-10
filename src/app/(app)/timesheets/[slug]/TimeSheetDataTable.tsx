@@ -33,6 +33,8 @@ type TimesheetDay = {
 type TimeSheetData = {
   data: {
     id: string
+    first_date: string
+    second_date: string
     departure_date: string
     arrival_date: string
     traveled_hours: number

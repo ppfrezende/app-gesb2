@@ -75,9 +75,8 @@ export function DeleteModal({
         isDisabled={isDisable}
         title={isDisable === true ? tooltipComment : ''}
         onClick={onDeleteOpen}
-        leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
       >
-        Deletar
+        <Icon as={RiDeleteBinLine} fontSize="16" />
       </NegativeButton>
       <Modal
         size="sm"

@@ -11,10 +11,6 @@ import {
 import DataCard from '@/app/components/Cards/DataCard'
 import { RiArrowRightUpFill } from '@/app/components/icons'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
-import {
-  GetConsultivesResponse,
-  getConsultives,
-} from '../service-department/consultives/useConsultives'
 import { useState } from 'react'
 import {
   getCustomers,
@@ -28,14 +24,18 @@ import {
   getTechnicians,
   GetTechniciansResponse,
 } from '../service-department/technicians/useTechnicians'
+import {
+  GetInterventionsResponse,
+  getInterventions,
+} from '../service-department/interventions/useInterventions'
 
 export default function DashBoard() {
   const [page] = useState(1)
 
-  const { data: consultivesData } = useQuery({
-    queryKey: ['consultive', page],
-    queryFn: () => getConsultives(page),
-  }) as UseQueryResult<GetConsultivesResponse, unknown>
+  const { data } = useQuery({
+    queryKey: ['intervention', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
 
   const { data: techniciansData } = useQuery({
     queryKey: ['technician', page],
@@ -61,12 +61,12 @@ export default function DashBoard() {
       borderRadius="10"
       padding="8"
     >
-      <Heading>Dashoboar</Heading>
+      <Heading>DashBoard</Heading>
       <SimpleGrid columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
         <DataCard
           marginRight="2"
-          title="Consultivos"
-          totalCount={consultivesData?.totalCount}
+          title="Intervenções"
+          totalCount={data?.totalCount}
         >
           <Flex marginTop="2" flexDirection="row">
             <Text fontSize="10px">3%</Text>

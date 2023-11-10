@@ -17,7 +17,6 @@ export default function AllTimeSheetsTable() {
   const { data } = useQuery({
     queryKey: ['timesheet', page],
     queryFn: () => getTimeSheets(page),
-    staleTime: 60000,
   }) as UseQueryResult<GetTimeSheetResponse, unknown>
 
   return (
@@ -52,7 +51,9 @@ export default function AllTimeSheetsTable() {
               <Text>{timesheet.technician_name}</Text>
             </Td>
             <Td>
-              <Text>{timesheet.created_at}</Text>
+              <Text>
+                {timesheet.first_date} - {timesheet.second_date}
+              </Text>
             </Td>
           </Tr>
         )

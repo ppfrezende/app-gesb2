@@ -38,17 +38,16 @@ import {
 } from '@tanstack/react-query'
 import { api } from '@/services/apiClient'
 import {
-  createConsultiveFormSchema,
-  updateConsultiveFormSchema,
+  createInterventionFormSchema,
+  updateInterventionFormSchema,
 } from './schemas'
 import { Input } from '@/app/components/Form/input'
 import {
-  ConsultiveResponse,
-  GetConsultivesResponse,
-  getConsultives,
-} from './useConsultives'
+  GetInterventionsResponse,
+  InterventionResponse,
+  getInterventions,
+} from './useInterventions'
 import { useEffect, useState } from 'react'
-import ConsultiveList from './ConsultiveList'
 import { HorizontalInput } from '@/app/components/Form/horizontalInput'
 import {
   GetTechniciansResponse,
@@ -67,16 +66,16 @@ import {
 } from '../registrations/@purchase_orders/usePurchaseOrders'
 import { dirtyValues } from '@/utils/dirtyValues'
 import { HorizontalSelect } from '@/app/components/Form/horizontalSelect'
-import { stringToJavaScriptDate } from '@/utils/stringToJavaScriptDate'
+import InterventionList from './InterventionsList'
 
-type ConsultiveFormData = {
+type InterventionFormData = {
   progressive?: string
   intervention_number?: string
   po_number?: string
   job_number?: string
   isOffshore?: boolean
-  initial_at?: string
-  finished_at?: string
+  initial_at?: Date | string
+  finished_at?: Date | string
   technicianId?: string
   siteId?: string
   customerId?: string
@@ -86,47 +85,57 @@ type ConsultiveFormData = {
 }
 
 type FormProps = {
-  consultive?: ConsultiveResponse
-  consultiveId?: string
+  intervention?: InterventionResponse
+  interventionId?: string
 }
 
-export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
+export function InterventionForm({
+  intervention,
+  interventionId = '',
+}: FormProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const queryClient = useQueryClient()
+  const [page] = useState(1)
+
+  const { data } = useQuery({
+    queryKey: ['intervention', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
 
   const { register, handleSubmit, formState, reset, watch } = useForm({
     mode: 'onBlur',
     defaultValues: {
-      intervention_number: consultiveId
-        ? consultive?.intervention_number
+      progressive: interventionId
+        ? intervention?.progressive
+        : data?.nextProgressive,
+      intervention_number: interventionId
+        ? intervention?.intervention_number
         : '23INTB',
-      technicianId: consultiveId ? consultive?.technicianId : undefined,
-      siteId: consultiveId ? consultive?.siteId : undefined,
-      customerId: consultiveId ? consultive?.customerId : undefined,
-      customerProjectManagerId: consultiveId
-        ? consultive?.customerProjectManagerId
+      technicianId: interventionId ? intervention?.technicianId : undefined,
+      siteId: interventionId ? intervention?.siteId : undefined,
+      customerId: interventionId ? intervention?.customerId : undefined,
+      customerProjectManagerId: interventionId
+        ? intervention?.customerProjectManagerId
         : undefined,
-      po_number: consultiveId ? consultive?.po_number : '',
-      job_number: consultiveId ? consultive?.job_number : '',
-      initial_at: consultiveId
-        ? stringToJavaScriptDate(consultive.initial_at)
-        : '',
-      finished_at: consultiveId
-        ? stringToJavaScriptDate(consultive.finished_at)
-        : '',
-      isOffshore: consultiveId ? consultive?.isOffshore : undefined,
-      purchaseOrderId: consultiveId ? consultive?.purchaseOrder.id : undefined,
-      skillId: consultiveId ? consultive?.skill.id : undefined,
+      po_number: interventionId ? intervention?.po_number : '',
+      job_number: interventionId ? intervention?.job_number : '',
+      isOffshore: interventionId ? intervention?.isOffshore : undefined,
+      purchaseOrderId: interventionId
+        ? intervention?.purchaseOrder.id
+        : undefined,
+      skillId: interventionId ? intervention?.skill.id : undefined,
     },
     resolver: yupResolver(
-      consultiveId ? updateConsultiveFormSchema : createConsultiveFormSchema,
+      interventionId
+        ? updateInterventionFormSchema
+        : createInterventionFormSchema,
     ),
   })
 
   const { errors, isSubmitting } = formState
 
-  const updateConsultive = useMutation(
+  const updateIntervention = useMutation(
     async ({
       progressive,
       intervention_number,
@@ -139,9 +148,9 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
       siteId,
       customerId,
       customerProjectManagerId,
-    }: ConsultiveFormData) => {
+    }: InterventionFormData) => {
       try {
-        await api.put(`/consultives/${consultiveId}`, {
+        await api.put(`/interventions/${interventionId}`, {
           progressive,
           intervention_number,
           po_number,
@@ -154,22 +163,22 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
           customerId,
           customerProjectManagerId,
         })
-        closeModalandAddToast(consultiveId)
+        closeModalandAddToast(interventionId)
       } catch (err) {
         toastError()
       }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['consultive'] })
+        queryClient.invalidateQueries({ queryKey: ['intervention'] })
       },
     },
   )
 
-  const createConsultive = useMutation(
-    async (consultive: ConsultiveFormData) => {
+  const createIntervention = useMutation(
+    async (intervention: InterventionFormData) => {
       try {
-        await api.post('/consultives', consultive)
+        await api.post('/interventions', intervention)
         closeModalandAddToast()
         reset()
       } catch (err) {
@@ -178,20 +187,22 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['consultive'] })
+        queryClient.invalidateQueries({ queryKey: ['intervention'] })
       },
     },
   )
 
-  const handleCreateOrUpdateConsultive: SubmitHandler<
-    ConsultiveFormData
+  const handleCreateOrUpdateIntervention: SubmitHandler<
+    InterventionFormData
   > = async (values) => {
-    if (consultiveId) {
+    if (values.finished_at === '') {
+      values.finished_at = null
+    }
+    if (interventionId) {
       const modifiedValues = dirtyValues(formState.dirtyFields, values)
-      console.log(modifiedValues)
-      await updateConsultive.mutateAsync(modifiedValues)
+      await updateIntervention.mutateAsync(modifiedValues)
     } else {
-      await createConsultive.mutateAsync(values)
+      await createIntervention.mutateAsync(values)
     }
   }
 
@@ -204,14 +215,14 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
     onClose()
     if (id) {
       toast({
-        title: 'Consultivo atualizado com sucesso.',
+        title: 'Intervenção atualizada com sucesso.',
         status: 'success',
         duration: 3000,
         isClosable: true,
       })
     } else {
       toast({
-        title: 'Consultivo criado com sucesso.',
+        title: 'Intervenção criada com sucesso.',
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -221,19 +232,12 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
 
   function toastError() {
     toast({
-      title: 'Erro na criação do Consultivo',
+      title: 'Erro na criação da Intervenção',
       status: 'error',
       duration: 3000,
       isClosable: true,
     })
   }
-
-  const [page] = useState(1)
-
-  const { data } = useQuery({
-    queryKey: ['consultive', page],
-    queryFn: () => getConsultives(page),
-  }) as UseQueryResult<GetConsultivesResponse, unknown>
 
   const { data: techniciansData } = useQuery({
     queryKey: ['technician', page],
@@ -288,12 +292,12 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
       }
     }
     fetchSkills()
-  }, [watch, purchaseOrderId])
+  }, [purchaseOrderId])
 
   return (
     <>
       <PositiveButton onClick={onOpen}>
-        <Icon as={consultiveId ? RiEdit2Line : RiAddLine} fontSize="20" />
+        <Icon as={interventionId ? RiEdit2Line : RiAddLine} fontSize="20" />
       </PositiveButton>
       <Modal
         size="6xl"
@@ -302,7 +306,10 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
         onClose={onClose}
         motionPreset="scale"
       >
-        <Box as="form" onSubmit={handleSubmit(handleCreateOrUpdateConsultive)}>
+        <Box
+          as="form"
+          onSubmit={handleSubmit(handleCreateOrUpdateIntervention)}
+        >
           <ModalOverlay
             bg="none"
             backdropFilter="auto"
@@ -569,7 +576,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                             {...register('initial_at')}
                             name="initial_at"
                             label="Data de início:"
-                            type="datetime-local"
+                            type="date"
                             error={errors.initial_at}
                           />
                         </Flex>
@@ -583,7 +590,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                             {...register('finished_at')}
                             name="finished_at"
                             label="Data fim:"
-                            type="datetime-local"
+                            type="date"
                             error={errors.finished_at}
                           />
                         </Flex>
@@ -711,7 +718,7 @@ export function ConsultiveForm({ consultive, consultiveId = '' }: FormProps) {
                   </Flex>
                 </Flex>
                 <Box marginLeft="2">
-                  <ConsultiveList />
+                  <InterventionList />
                 </Box>
               </Flex>
             </ModalBody>

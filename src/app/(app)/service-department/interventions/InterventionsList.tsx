@@ -11,7 +11,7 @@ import {
 } from '@/app/components/chakraui'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { GetConsultivesResponse, getConsultives } from './useConsultives'
+import { GetInterventionsResponse, getInterventions } from './useInterventions'
 import { truncateString } from '@/utils/truncateString'
 
 const TableHead = ({ children }) => {
@@ -22,13 +22,13 @@ const TableData = ({ children }) => {
   return <Td fontSize="10px">{children}</Td>
 }
 
-export default function ConsultiveList() {
+export default function InterventionList() {
   const [page] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['consultive', page],
-    queryFn: () => getConsultives(page),
-  }) as UseQueryResult<GetConsultivesResponse, unknown>
+    queryKey: ['intervention', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
   return (
     <>
       <Table size="sm" variant="simple">
@@ -44,20 +44,20 @@ export default function ConsultiveList() {
           </Tr>
         </Thead>
         <Tbody>
-          {data?.consultives.map((consultive) => {
+          {data?.interventions.map((intervention) => {
             return (
-              <Tr key={consultive.id}>
-                <TableData>{consultive.progressive}</TableData>
-                <TableData>{consultive.intervention_number}</TableData>
+              <Tr key={intervention.id}>
+                <TableData>{intervention.progressive}</TableData>
+                <TableData>{intervention.intervention_number}</TableData>
                 <TableData>
-                  {truncateString(consultive.site.description, 15)}
+                  {truncateString(intervention.site.description, 15)}
                 </TableData>
                 <TableData>
-                  {truncateString(consultive.technician.name, 10)}
+                  {truncateString(intervention.technician.name, 10)}
                 </TableData>
-                <TableData>{consultive.initial_at}</TableData>
+                <TableData>{intervention.initial_at}</TableData>
                 <TableData>
-                  {consultive.finished_at ? consultive.finished_at : '...'}
+                  {intervention.finished_at ? intervention.finished_at : '...'}
                 </TableData>
               </Tr>
             )

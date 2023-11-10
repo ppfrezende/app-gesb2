@@ -12,17 +12,17 @@ import {
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Pagination } from '@/app/components/Pagination'
-import { GetConsultivesResponse, getConsultives } from './useConsultives'
-import ConsultivesTable from './ConsultivesTable'
-import { ConsultiveForm } from './ConsultiveForm'
+import { GetInterventionsResponse, getInterventions } from './useInterventions'
+import { InterventionForm } from './InterventionForm'
+import InterventionsTable from './InterventionsTable'
 
-export default function ConsultivesPage() {
+export default function InterventionsPage() {
   const [page, setPage] = useState(1)
 
   const { data } = useQuery({
-    queryKey: ['consultive', page],
-    queryFn: () => getConsultives(page),
-  }) as UseQueryResult<GetConsultivesResponse, unknown>
+    queryKey: ['intervention', page],
+    queryFn: () => getInterventions(page),
+  }) as UseQueryResult<GetInterventionsResponse, unknown>
   return (
     <Box
       boxShadow="0px 4px 4px rgba(0, 0, 0, 0.15)"
@@ -31,7 +31,7 @@ export default function ConsultivesPage() {
       padding="8"
     >
       <Flex marginBottom="8" justify="space-between" align="center">
-        <ConsultiveForm />
+        <InterventionForm />
       </Flex>
 
       <>
@@ -49,7 +49,7 @@ export default function ConsultivesPage() {
           </Thead>
 
           <Tbody>
-            <ConsultivesTable />
+            <InterventionsTable />
           </Tbody>
         </Table>
         <Pagination

@@ -49,12 +49,20 @@ export default function TimeSheetPage({
               <DeleteModal id={id} url="timesheet/" title="TimeSheet" />
             </Flex>
           </Flex>
-          <Box marginTop="4">
-            <Text fontSize="xl" fontWeight="bold">
-              {data.technician_name}
-            </Text>
-            <Text>{data.technician_email}</Text>
-          </Box>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Box marginTop="4">
+              <Text fontSize="xl" fontWeight="bold">
+                {data.technician_name}
+              </Text>
+              <Text>{data.technician_email}</Text>
+            </Box>
+            <Box marginTop="4">
+              <Text fontWeight="bold">PERÍODO:</Text>
+              <Text>
+                {data.first_date} - {data.second_date}
+              </Text>
+            </Box>
+          </Flex>
         </Flex>
         <Box>
           <TimeSheetDataTable data={data} />

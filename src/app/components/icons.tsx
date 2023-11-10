@@ -41,6 +41,7 @@ export {
   RiUserVoiceFill,
   RiCheckboxCircleFill,
   RiArrowRightUpFill,
+  RiBarChart2Line,
 } from 'react-icons/ri'
 
 export {

@@ -20,10 +20,10 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import Link from 'next/link'
 import { DeleteModal } from '@/app/components/DeleteModal'
-import { ConsultiveResponse, getConsultive } from '../useConsultives'
-import { ConsultiveForm } from '../ConsultiveForm'
+import { InterventionResponse, getIntervention } from '../useInterventions'
+import { InterventionForm } from '../InterventionForm'
 
-export default function ConsultivePage({
+export default function InterventionPage({
   params,
 }: {
   params: { slug: string }
@@ -32,8 +32,8 @@ export default function ConsultivePage({
 
   const { data } = useQuery({
     queryKey: ['consultive', id],
-    queryFn: () => getConsultive(id),
-  }) as UseQueryResult<ConsultiveResponse, unknown>
+    queryFn: () => getIntervention(id),
+  }) as UseQueryResult<InterventionResponse, unknown>
 
   return (
     <Box
@@ -43,16 +43,16 @@ export default function ConsultivePage({
       padding="8"
     >
       <Flex flexDirection="row" justifyContent="space-between">
-        <ChakraLink as={Link} href={'/service-department/consultives'}>
+        <ChakraLink as={Link} href={'/service-department/interventions'}>
           <Icon as={RiArrowLeftLine} fontSize="2xl" />
         </ChakraLink>
 
         <Flex>
           <Box marginRight="4">
-            <ConsultiveForm consultive={data} consultiveId={id} />
+            <InterventionForm intervention={data} interventionId={id} />
           </Box>
 
-          <DeleteModal id={id} url="consultives/" title="Consultivo" />
+          <DeleteModal id={id} url="interventions/" title="Intervenção" />
         </Flex>
       </Flex>
       <VStack marginTop="6" marginBottom="8" align="center">
@@ -145,11 +145,13 @@ export default function ConsultivePage({
                 justifyContent="space-between"
               >
                 <Text>Data fim: </Text>
-                <Text>
-                  {data?.finished_at
-                    ? data.finished_at
-                    : 'Intervenção em andamento...'}
-                </Text>
+                {data?.finished_at === 'Em andamento...' ? (
+                  <Text color="red" fontStyle="italic">
+                    {data?.finished_at}
+                  </Text>
+                ) : (
+                  <Text>{data?.finished_at}</Text>
+                )}
               </Flex>
             </Flex>
             <Flex
