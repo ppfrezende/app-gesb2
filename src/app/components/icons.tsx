@@ -42,6 +42,7 @@ export {
   RiCheckboxCircleFill,
   RiArrowRightUpFill,
   RiBarChart2Line,
+  RiFilePdf2Line,
 } from 'react-icons/ri'
 
 export {

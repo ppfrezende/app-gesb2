@@ -16,7 +16,11 @@ import {
   Td,
   Button,
 } from '@/app/components/chakraui'
-import { RiArrowLeftLine, RiCheckboxCircleFill } from '@/app/components/icons'
+import {
+  RiArrowLeftLine,
+  RiCheckboxCircleFill,
+  RiFilePdf2Line,
+} from '@/app/components/icons'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import Link from 'next/link'
@@ -33,6 +37,7 @@ import {
 import { useState } from 'react'
 import { HorizontalSelect } from '@/app/components/Form/horizontalSelect'
 import TimeSheetDataTable from '@/app/(app)/timesheets/[slug]/TimeSheetDataTable'
+import PDFReader from './PDFReader'
 
 export default function ConsultivePage({
   params,
@@ -93,7 +98,12 @@ export default function ConsultivePage({
               {/* <InterventionForm intervention={data} interventionId={id} /> */}
             </Box>
 
-            <Button>Emitir Fatura</Button>
+            <Button
+              onClick={() => PDFReader(data)}
+              rightIcon={<Icon as={RiFilePdf2Line} />}
+            >
+              Emitir Fatura
+            </Button>
           </Flex>
         </Flex>
         <VStack marginTop="6" marginBottom="8" align="center">
