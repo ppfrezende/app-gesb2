@@ -34,7 +34,7 @@ import {
   getTimeSheet,
   getTimeSheetsByTechId,
 } from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HorizontalSelect } from '@/app/components/Form/horizontalSelect'
 import TimeSheetDataTable from '@/app/(app)/timesheets/[slug]/TimeSheetDataTable'
 import PDFReader from './PDFReader'
@@ -63,6 +63,14 @@ export default function ConsultivePage({
     queryFn: () => getTimeSheet(selectedTimesheetId),
   }) as UseQueryResult<TimeSheetData, unknown>
 
+  const [isInVoiceButtonDisable, setIsInVoiceButtonDisable] = useState(true)
+
+  useEffect(() => {
+    if (timeSheetData !== null) {
+      setIsInVoiceButtonDisable(false)
+    }
+  }, [timeSheetData])
+
   return (
     <Flex flexDirection="column">
       <Box
@@ -76,7 +84,7 @@ export default function ConsultivePage({
             <Icon as={RiArrowLeftLine} fontSize="2xl" />
           </ChakraLink>
 
-          <Flex>
+          <Flex flexDirection="row" justifyContent="center" alignItems="center">
             <HorizontalSelect
               // {...register('technicianId')}
               name="timeSheetDataId"
@@ -94,13 +102,14 @@ export default function ConsultivePage({
                 )
               })}
             </HorizontalSelect>
-            <Box marginRight="4">
-              {/* <InterventionForm intervention={data} interventionId={id} /> */}
-            </Box>
 
             <Button
-              onClick={() => PDFReader(data)}
+              isDisabled={isInVoiceButtonDisable}
+              onClick={() => PDFReader(data, timeSheetData)}
               rightIcon={<Icon as={RiFilePdf2Line} />}
+              colorScheme="green"
+              size="sm"
+              width="200px"
             >
               Emitir Fatura
             </Button>

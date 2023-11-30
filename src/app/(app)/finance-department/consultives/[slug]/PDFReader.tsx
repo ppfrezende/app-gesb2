@@ -2,13 +2,18 @@
 // @ts-nocheck
 
 import { InterventionResponse } from '@/app/(app)/service-department/interventions/useInterventions'
+import { TimeSheetData } from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
+import { convertDecimalToHour } from '@/utils/hourConverter'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 import { DynamicContent, Margins, PageSize } from 'pdfmake/interfaces'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
-export default function PDFReader(pdfData: InterventionResponse) {
+export default function PDFReader(
+  interventionData: InterventionResponse,
+  timeSheetData: TimeSheetData,
+) {
   function pdfFooter(currentPage: number, pageCount: number) {
     return [
       {
@@ -19,6 +24,60 @@ export default function PDFReader(pdfData: InterventionResponse) {
       },
     ]
   }
+
+  const valuePerTravelHour = (
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HN_offshore
+      : interventionData?.purchaseOrder.factor_HN_onshore) *
+    interventionData?.skill.travel_hour
+  ).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
+
+  const totalTraveledHoursPartial =
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HN_offshore
+      : interventionData?.purchaseOrder.factor_HN_onshore) *
+    interventionData?.skill.travel_hour *
+    (timeSheetData?.traveled_hours * 24)
+
+  const valuePerNormalHour = (
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HN_offshore
+      : interventionData?.purchaseOrder.factor_HN_onshore) *
+    interventionData?.skill.normal_hour
+  ).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
+
+  const totalNormalHourPartial =
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HN_offshore
+      : interventionData?.purchaseOrder.factor_HN_onshore) *
+    interventionData?.skill.normal_hour *
+    ((timeSheetData?.normal_hours_range_A +
+      timeSheetData?.normal_hours_range_B) *
+      24)
+
+  const valuePerExtraHour = (
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HE_offshore
+      : interventionData?.purchaseOrder.factor_HE_onshore) *
+    interventionData?.skill.normal_hour
+  ).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
+
+  const totalExtraHourPartial =
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HE_offshore
+      : interventionData?.purchaseOrder.factor_HE_onshore) *
+    interventionData?.skill.normal_hour *
+    ((timeSheetData?.extra_hours_range_C + timeSheetData?.extra_hours_range_D) *
+      24)
 
   const docDefinition = {
     pageSize: 'A4' as PageSize,
@@ -36,7 +95,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           {
-            text: 'FATURA FECHADA',
+            text: 'FATURA FECHADA RESUMO',
             fontSize: 18,
             bold: true,
             color: 'red',
@@ -44,7 +103,11 @@ export default function PDFReader(pdfData: InterventionResponse) {
             margin: [5, 2, 10, 45],
           },
           {
-            text: '11/01/2023',
+            text: `${new Date(Date.now()).toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            })}`,
             fontSize: 14,
             bold: true,
             italics: true,
@@ -55,7 +118,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'PROGRESSIVE:', style: 'content' },
-          { text: pdfData?.progressive, style: 'italic' },
+          { text: interventionData?.progressive, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -64,9 +127,9 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'PLACE:', style: 'content' },
-          { text: pdfData.site.description, style: 'italic' },
+          { text: interventionData.site.description, style: 'italic' },
           {
-            text: pdfData.isOffshore === true ? 'Offshore' : 'Onshore',
+            text: interventionData.isOffshore === true ? 'Offshore' : 'Onshore',
             style: 'italic',
           },
           { text: '', style: 'content' },
@@ -76,7 +139,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'CUSTOMER:', style: 'content' },
-          { text: pdfData.customer.name, style: 'italic' },
+          { text: interventionData.customer.name, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -85,7 +148,10 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'PROJECT MANAGER:', style: 'content' },
-          { text: pdfData.customerProjectManager.name, style: 'italic' },
+          {
+            text: interventionData.customerProjectManager.name,
+            style: 'italic',
+          },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -94,7 +160,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'JOB NUMBER:', style: 'content' },
-          { text: pdfData.job_number, style: 'italic' },
+          { text: interventionData.job_number, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -104,7 +170,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'TECHNICIAN:', style: 'content' },
-          { text: pdfData.technician.name, style: 'italic' },
+          { text: interventionData.technician.name, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -113,8 +179,8 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'DATE:', style: 'content' },
-          { text: `${pdfData.initial_at} -`, style: 'italic' },
-          { text: pdfData.finished_at, style: 'italic' },
+          { text: `${interventionData.initial_at} -`, style: 'italic' },
+          { text: interventionData.finished_at, style: 'italic' },
           { text: '', style: 'content' },
         ],
       },
@@ -122,7 +188,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'OUR REFERENCE:', style: 'content' },
-          { text: pdfData.intervention_number, style: 'italic' },
+          { text: interventionData.intervention_number, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -131,7 +197,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'PURCHASE ORDER:', style: 'content' },
-          { text: pdfData.purchaseOrder.description, style: 'italic' },
+          { text: interventionData.purchaseOrder.description, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -140,7 +206,7 @@ export default function PDFReader(pdfData: InterventionResponse) {
         alignment: 'justify',
         columns: [
           { text: 'CURRENCY:', style: 'content' },
-          { text: pdfData.purchaseOrder.currency, style: 'italic' },
+          { text: interventionData.purchaseOrder.currency, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -161,17 +227,55 @@ export default function PDFReader(pdfData: InterventionResponse) {
           widths: ['*', '*', '*', '*'],
           body: [
             ['Descrição', 'Horas', '$/Hora', 'TOTAL PARCIAL'],
-            ['Home Office', '00', 'R$ --', 'R$ -'],
-            ['Hora Viagem Nacional', '00', 'R$ --', 'R$ -'],
-            ['Hora Viagem Exterior', '00', 'R$ --', 'R$ -'],
-            ['HN Onshore', '00', 'R$ --', 'R$ -'],
-            ['HE Onshore', '00', 'R$ --', 'R$ -'],
-            ['HN Exterior Onshore', '00', 'R$ --', 'R$ -'],
-            ['HE Exterior Onshore', '00', 'R$ --', 'R$ -'],
-            ['HN Offshore', '00', 'R$ --', 'R$ -'],
-            ['HE Offshore', '00', 'R$ --', 'R$ -'],
-            ['HN Exterior Offshore', '00', 'R$ --', 'R$ -'],
-            ['HE Exterior Offshore', '00', 'R$ --', 'R$ -'],
+            [
+              `Hora Viagem ${
+                timeSheetData?.international_allowance === true
+                  ? 'Exterior'
+                  : 'Nacional'
+              }`,
+              `${convertDecimalToHour(timeSheetData?.traveled_hours)}`,
+              `${valuePerTravelHour}`,
+              `${totalTraveledHoursPartial.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}`,
+            ],
+            [
+              `HN ${
+                timeSheetData?.international_allowance === true
+                  ? 'Exterior'
+                  : 'Nacional'
+              } ${
+                interventionData?.isOffshore === true ? 'Offshore' : 'Onshore'
+              }`,
+              `${convertDecimalToHour(
+                timeSheetData?.normal_hours_range_A +
+                  timeSheetData?.normal_hours_range_B,
+              )}`,
+              `${valuePerNormalHour}`,
+              `${totalNormalHourPartial.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}`,
+            ],
+            [
+              `HE ${
+                timeSheetData?.international_allowance === true
+                  ? 'Exterior'
+                  : 'Nacional'
+              } ${
+                interventionData?.isOffshore === true ? 'Offshore' : 'Onshore'
+              }`,
+              `${convertDecimalToHour(
+                timeSheetData?.extra_hours_range_C +
+                  timeSheetData?.extra_hours_range_D,
+              )}`,
+              `${valuePerExtraHour}`,
+              `${totalExtraHourPartial.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}`,
+            ],
           ],
         },
       },
@@ -179,7 +283,17 @@ export default function PDFReader(pdfData: InterventionResponse) {
         style: 'totalTable',
         table: {
           widths: ['*', '*'],
-          body: [['TOTAL:', '000']],
+          body: [
+            [
+              'TOTAL:',
+              `${(
+                totalNormalHourPartial + totalExtraHourPartial
+              ).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}`,
+            ],
+          ],
         },
       },
       {
@@ -214,6 +328,17 @@ export default function PDFReader(pdfData: InterventionResponse) {
       },
     },
   }
+
+  console.log(
+    (interventionData?.isOffshore === true
+      ? interventionData?.purchaseOrder.factor_HE_offshore
+      : interventionData?.purchaseOrder.factor_HE_onshore) *
+      interventionData?.skill.normal_hour *
+      ((timeSheetData?.normal_hours_range_A +
+        timeSheetData?.normal_hours_range_B) *
+        24),
+  )
+  console.log(timeSheetData)
 
   pdfMake.createPdf(docDefinition).open()
 }
