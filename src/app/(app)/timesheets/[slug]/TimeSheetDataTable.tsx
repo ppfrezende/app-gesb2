@@ -1,3 +1,4 @@
+import { TimeSheetData } from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
 import {
   Box,
   Divider,
@@ -11,50 +12,54 @@ import {
   Tr,
 } from '@/app/components/chakraui'
 
-type TimesheetDay = {
-  id: string
-  day: string
-  departure: number
-  arrival: number
-  rangeAfrom: number
-  rangeAto: number
-  rangeBfrom: number
-  rangeBto: number
-  rangeCfrom: number
-  rangeCto: number
-  rangeDfrom: number
-  rangeDto: number
-  isOffshore: boolean
-  technician_id: string
-  timeSheetDataId: string
-  userName: string
+// type TimesheetDay = {
+//   id: string
+//   day: string
+//   departure: number
+//   arrival: number
+//   rangeAfrom: number
+//   rangeAto: number
+//   rangeBfrom: number
+//   rangeBto: number
+//   rangeCfrom: number
+//   rangeCto: number
+//   rangeDfrom: number
+//   rangeDto: number
+//   on_offshore: string
+//   technician_id: string
+//   timeSheetDataId: string
+//   userName: string
+// }
+
+// type TimeSheetData = {
+//   data: {
+//     id: string
+//     first_date: string
+//     second_date: string
+//     departure_date: string
+//     arrival_date: string
+//     traveled_hours: number
+//     normal_hours_range_A: number
+//     normal_hours_range_B: number
+//     extra_hours_range_C: number
+//     extra_hours_range_D: number
+//     technician_id: string
+//     technician_name: string
+//     technician_email: string
+//     intervention_description: string
+//     site: string
+//     international_allowance: boolean
+//     created_at: string
+//     userName: string
+//     timesheetdays: TimesheetDay[]
+//   }
+// }
+
+type TimeSheetDataTableProps = {
+  data: TimeSheetData
 }
 
-type TimeSheetData = {
-  data: {
-    id: string
-    first_date: string
-    second_date: string
-    departure_date: string
-    arrival_date: string
-    traveled_hours: number
-    normal_hours_range_A: number
-    normal_hours_range_B: number
-    extra_hours_range_C: number
-    extra_hours_range_D: number
-    technician_id: string
-    technician_name: string
-    technician_email: string
-    intervention_description: string
-    site: string
-    international_allowance: boolean
-    created_at: string
-    userName: string
-    timesheetdays: TimesheetDay[]
-  }
-}
-
-export default function TimeSheetDataTable({ data }: TimeSheetData) {
+export default function TimeSheetDataTable({ data }: TimeSheetDataTableProps) {
   return (
     <Table variant="simple" width="full">
       <Thead>
@@ -153,9 +158,7 @@ export default function TimeSheetDataTable({ data }: TimeSheetData) {
               </Td>
               <Td maxWidth="4">
                 <Box>
-                  <Text>
-                    {timesheetday.isOffshore === true ? 'OffShore' : 'OnShore'}
-                  </Text>
+                  <Text>{timesheetday.isOffshore}</Text>
                 </Box>
               </Td>
             </Tr>

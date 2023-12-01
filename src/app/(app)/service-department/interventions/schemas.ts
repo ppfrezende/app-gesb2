@@ -1,3 +1,4 @@
+import { parse } from 'date-fns'
 import * as yup from 'yup'
 
 export const createInterventionFormSchema = yup.object({
@@ -8,18 +9,18 @@ export const createInterventionFormSchema = yup.object({
   isOffshore: yup.boolean().required('Campo Obrigatório'),
   initial_at: yup
     .string()
-    .transform((value, originalValue) =>
-      originalValue === '' ? null : new Date(originalValue),
-    )
-    .typeError('Campo Obrigatório'),
+    .transform(function (value) {
+      if (this.isType(value)) {
+        return value
+      }
+      const parsedDate = parse(value, 'yyyy-MM-dd', new Date())
+      return parsedDate
+    })
+    .required('Campo Obrigatório'),
   finished_at: yup
     .string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr)),
-  // finished_at: yup
-  //   .string()
-  //   .nullable()
-  //   .transform((curr, orig) => (orig === '' ? null : curr)),
   technicianId: yup.string().required('Campo Obrigatório'),
   siteId: yup.string().required('Campo Obrigatório'),
   customerId: yup.string().required('Campo Obrigatório'),
@@ -37,17 +38,17 @@ export const updateInterventionFormSchema = yup.object({
   initial_at: yup
     .string()
     .nullable()
-    .transform((value, originalValue) =>
-      originalValue === '' ? null : new Date(originalValue),
-    ),
+    .transform(function (value) {
+      if (this.isType(value)) {
+        return value
+      }
+      const parsedDate = parse(value, 'yyyy-MM-dd', new Date())
+      return parsedDate
+    }),
   finished_at: yup
     .string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr)),
-  // finished_at: yup
-  //   .string()
-  //   .nullable()
-  //   .transform((curr, orig) => (orig === '' ? null : curr)),
   technicianId: yup.string().optional(),
   siteId: yup.string().optional(),
   customerId: yup.string().optional(),

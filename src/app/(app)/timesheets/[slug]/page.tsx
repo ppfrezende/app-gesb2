@@ -25,6 +25,7 @@ export default function TimeSheetPage({
     queryKey: ['timesheet', id],
     queryFn: () => getTimeSheet(id),
   }) as UseQueryResult<TimeSheetData, unknown>
+  console.log(data)
 
   return (
     <Flex flex="1" flexDirection="column">

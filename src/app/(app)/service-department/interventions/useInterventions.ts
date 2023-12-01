@@ -1,5 +1,6 @@
 import { api } from '@/services/apiClient'
 import { PurchaseOrder } from '../registrations/@purchase_orders/usePurchaseOrders'
+import { formatDateToDDMMYYYY } from '@/utils/stringToJavaScriptDate'
 
 type Site = {
   id: string
@@ -143,22 +144,11 @@ export async function getInterventions(
         po_number: intervention.po_number,
         job_number: intervention.job_number,
         isOffshore: intervention.isOffshore,
-        initial_at: new Date(intervention.initial_at).toLocaleDateString(
-          'pt-BR',
-          {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          },
-        ),
+        initial_at: formatDateToDDMMYYYY(intervention.initial_at),
         finished_at:
           intervention.finished_at === '1970-01-01T00:00:00.000Z'
             ? 'Em andamento...'
-            : new Date(intervention.finished_at).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-              }),
+            : formatDateToDDMMYYYY(intervention.finished_at),
         technicianId: intervention.technicianId,
         siteId: intervention.siteId,
         customerId: intervention.customerId,
@@ -209,14 +199,7 @@ export async function getInterventions(
           travel_hour: intervention.Skill.travel_hour,
         },
 
-        created_at: new Date(intervention.created_at).toLocaleDateString(
-          'pt-BR',
-          {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          },
-        ),
+        created_at: formatDateToDDMMYYYY(intervention.created_at),
         userName: intervention.userName,
       }
     },
@@ -258,22 +241,11 @@ export async function getIntervention(
     po_number: data.intervention.po_number,
     job_number: data.intervention.job_number,
     isOffshore: data.intervention.isOffshore,
-    initial_at: new Date(data.intervention.initial_at).toLocaleDateString(
-      'pt-BR',
-      {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      },
-    ),
+    initial_at: formatDateToDDMMYYYY(data.intervention.initial_at),
     finished_at:
       data.intervention.finished_at === '1970-01-01T00:00:00.000Z'
         ? 'Em andamento...'
-        : new Date(data.intervention.finished_at).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          }),
+        : formatDateToDDMMYYYY(data.intervention.finished_at),
     technicianId: data.intervention.technicianId,
     siteId: data.intervention.siteId,
     customerId: data.intervention.customerId,
@@ -325,14 +297,7 @@ export async function getIntervention(
       travel_hour: data.intervention.Skill.travel_hour,
     },
 
-    created_at: new Date(data.intervention.created_at).toLocaleDateString(
-      'pt-BR',
-      {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      },
-    ),
+    created_at: formatDateToDDMMYYYY(data.intervention.created_at),
     userName: data.intervention.userName,
   }
 }

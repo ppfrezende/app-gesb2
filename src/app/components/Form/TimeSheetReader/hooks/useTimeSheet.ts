@@ -255,7 +255,12 @@ export async function getTimeSheet(
           rangeCto: convertDecimalToHour(day.rangeCto),
           rangeDfrom: convertDecimalToHour(day.rangeDfrom),
           rangeDto: convertDecimalToHour(day.rangeDto),
-          on_offshore: day.isOffshore === true ? 'OffShore' : 'OnShore',
+          isOffshore:
+            day.isOffshore === true
+              ? 'OffShore'
+              : day.isOffshore === false
+              ? 'OnShore'
+              : '',
           technician_id: day.technician_id,
           timeSheetDataId: day.timeSheetDataId,
           userName: day.userName,
