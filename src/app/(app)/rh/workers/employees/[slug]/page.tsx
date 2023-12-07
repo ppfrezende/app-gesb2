@@ -185,14 +185,8 @@ export default function EmployeePage({ params }: { params: { slug: string } }) {
           marginRight="2"
           iconTop={RiHammerLine}
           iconBottom={FcStatistics}
-          path={`#`}
-          title="Intervenções"
-        />
-        <Card
-          iconTop={RiFileExcel2Line}
-          iconBottom={FcBarChart}
-          path={`#`}
-          title="Outra Coisa"
+          path={`/rh/workers/employees/${id}/expenses`}
+          title="Despesas"
         />
       </Flex>
     </Flex>

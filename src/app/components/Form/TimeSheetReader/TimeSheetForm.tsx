@@ -44,6 +44,7 @@ export default function TimeSheetForm({
   fileData,
   register,
 }: TimeSheetTableProps) {
+  console.log(fileData)
   return (
     <Table variant="simple" width="full">
       <Thead>

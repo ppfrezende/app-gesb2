@@ -94,7 +94,11 @@ export function SidebarNav() {
         >
           Consultivos
         </NavLink>
-        <NavLink marginLeft="2" icon={RiMoneyDollarCircleLine} href="#">
+        <NavLink
+          marginLeft="2"
+          icon={RiMoneyDollarCircleLine}
+          href="/finance-department/payroll"
+        >
           Folha Funcionários
         </NavLink>
       </NavSection>
