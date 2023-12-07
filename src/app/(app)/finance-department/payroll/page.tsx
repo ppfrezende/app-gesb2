@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Flex } from '@/app/components/chakraui'
+import { Box, Button, Flex, Icon } from '@/app/components/chakraui'
 import { HorizontalSelect } from '@/app/components/Form/horizontalSelect'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -8,10 +8,17 @@ import {
   GetTechniciansResponse,
   getTechnicians,
 } from '../../service-department/technicians/useTechnicians'
-import { getTimeSheetsByTechId } from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
-import { ExpenseReader } from '@/app/components/Form/ExpensesReader/ExpensesReader'
+import {
+  TechnicianResponse,
+  TimeSheetData,
+  getTechnician,
+  getTimeSheet,
+  getTimeSheetsByTechId,
+} from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
+import { RiFilePdf2Line } from 'react-icons/ri'
+import PDFPayrollReader from './PDFPayrollReader'
 
-export default function ConsultivesPage() {
+export default function PayrollPage() {
   const [page] = useState(1)
   const [selectedTechnicianId, setSelectedTechnicianId] = useState('')
   const [selectedTimesheetId, setSelectedTimesheetId] = useState('')
@@ -23,10 +30,15 @@ export default function ConsultivesPage() {
     queryFn: () => getTechnicians(page),
   }) as UseQueryResult<GetTechniciansResponse, unknown>
 
-  // const { data: timesheetsByTech } = useQuery({
-  //   queryKey: ['timesheet', page],
-  //   queryFn: () => getTimeSheetsByTechId(selectedTechnicianId, page),
-  // }) as UseQueryResult<GetTimeSheetResponse, unknown>
+  const { data: technician } = useQuery({
+    queryKey: ['technician', selectedTechnicianId],
+    queryFn: () => getTechnician(selectedTechnicianId),
+  }) as UseQueryResult<TechnicianResponse, unknown>
+
+  const { data: timeSheetData } = useQuery({
+    queryKey: ['timesheet', selectedTimesheetId],
+    queryFn: () => getTimeSheet(selectedTimesheetId),
+  }) as UseQueryResult<TimeSheetData, unknown>
 
   useEffect(() => {
     async function fetchTimesheetByTech() {
@@ -90,11 +102,16 @@ export default function ConsultivesPage() {
             )
           })}
         </HorizontalSelect>
-        <ExpenseReader
-          timesheet_id={selectedTimesheetId}
-          technician_id={selectedTechnicianId}
+        <Button
           isDisabled={isPayrollButtonDisable}
-        />
+          onClick={() => PDFPayrollReader(technician, timeSheetData)}
+          rightIcon={<Icon as={RiFilePdf2Line} />}
+          colorScheme="green"
+          size="sm"
+          width="200px"
+        >
+          Emitir Folha
+        </Button>
       </Flex>
     </Box>
   )

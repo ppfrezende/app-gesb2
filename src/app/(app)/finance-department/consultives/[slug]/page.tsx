@@ -38,6 +38,7 @@ import { useEffect, useState } from 'react'
 import { HorizontalSelect } from '@/app/components/Form/horizontalSelect'
 import TimeSheetDataTable from '@/app/(app)/timesheets/[slug]/TimeSheetDataTable'
 import PDFReader from './PDFReader'
+import { ExpenseReader } from '@/app/components/Form/ExpensesReader/ExpensesReader'
 
 export default function ConsultivePage({
   params,
@@ -86,6 +87,7 @@ export default function ConsultivePage({
 
           <Flex flexDirection="row" justifyContent="center" alignItems="center">
             <HorizontalSelect
+              marginRight="8"
               // {...register('technicianId')}
               name="timeSheetDataId"
               // error={errors.technicianId}
@@ -103,16 +105,12 @@ export default function ConsultivePage({
               })}
             </HorizontalSelect>
 
-            <Button
+            <ExpenseReader
               isDisabled={isInVoiceButtonDisable}
-              onClick={() => PDFReader(data, timeSheetData)}
-              rightIcon={<Icon as={RiFilePdf2Line} />}
-              colorScheme="green"
-              size="sm"
-              width="200px"
-            >
-              Emitir Fatura
-            </Button>
+              technician_id={data?.technicianId}
+              interventionData={data}
+              timesheet_id={selectedTimesheetId}
+            />
           </Flex>
         </Flex>
         <VStack marginTop="6" marginBottom="8" align="center">

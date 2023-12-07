@@ -52,7 +52,13 @@ export default function ExpensesList({ params }: { params: { slug: string } }) {
           />
 
           <Flex>
-            <Box marginRight="4">{/* <ExpenseReader /> */}</Box>
+            <Box marginRight="4">
+              {/* <ExpenseReader
+                timesheet_id={selectedTimesheetId}
+                technician_id={id}
+                isDisabled={isPayrollButtonDisable}
+              /> */}
+            </Box>
           </Flex>
         </Flex>
       </Box>
@@ -68,18 +74,6 @@ export default function ExpensesList({ params }: { params: { slug: string } }) {
         <Text fontWeight="bold" fontSize="lg" marginBottom="4">
           {data.name}
         </Text>
-        <Table colorScheme="blackAlpha">
-          <Thead>
-            <Tr>
-              <Th>Data</Th>
-              <Th>ID Despesa</Th>
-              <Th>Descrição</Th>
-              <Th>Valor</Th>
-              <Th>Tipo</Th>
-            </Tr>
-          </Thead>
-          <Tbody>{/* <TimeSheetsTable technician_id={id} /> */}</Tbody>
-        </Table>
       </Flex>
     </Flex>
   )

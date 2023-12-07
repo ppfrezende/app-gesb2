@@ -35,29 +35,26 @@ import {
 } from '../TimeSheetReader/hooks/useTimeSheet'
 import PDFPayrollReader from '@/app/(app)/finance-department/payroll/PDFPayrollReader'
 import { Technician } from '@/app/(app)/service-department/technicians/useTechnicians'
+import PDFReader from '@/app/(app)/finance-department/consultives/[slug]/PDFReader'
+import { InterventionResponse } from '@/app/(app)/service-department/interventions/useInterventions'
 
 type ExpenseReaderProps = {
   isDisabled: boolean
   technician_id: string
   timesheet_id: string
+  interventionData: InterventionResponse
 }
 
 export function ExpenseReader({
   isDisabled,
-  technician_id,
   timesheet_id,
+  interventionData,
 }: ExpenseReaderProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const toast = useToast()
 
   const { fileData, setFileData, handleExpensesUpload } = useExpensesUpload()
-
-  const totalOfExpenses = fileData
-    .reduce((total, currentValue) => {
-      return total + currentValue.amount
-    }, 0)
-    .toFixed(2)
 
   const { register, handleSubmit, formState, setValue } = useForm({
     mode: 'onChange',
@@ -131,11 +128,6 @@ export function ExpenseReader({
     queryFn: () => getTimeSheet(timesheet_id),
   }) as UseQueryResult<TimeSheetData, unknown>
 
-  const { data: technicianData } = useQuery({
-    queryKey: ['technician', technician_id],
-    queryFn: () => getTechnician(technician_id),
-  }) as UseQueryResult<Technician, unknown>
-
   return (
     <Flex flexDirection="column" alignItems="center">
       <ImportButton
@@ -182,7 +174,7 @@ export function ExpenseReader({
                     marginLeft="4"
                     type="submit"
                     onClick={() =>
-                      PDFPayrollReader(technicianData, timeSheetData, fileData)
+                      PDFReader(interventionData, timeSheetData, fileData)
                     }
                     isLoading={isSubmitting}
                     leftIcon={<Icon as={RiAddLine} fontSize="20" />}

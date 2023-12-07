@@ -1,19 +1,20 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { TimeSheetData } from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
+import {
+  TechnicianResponse,
+  TimeSheetData,
+} from '@/app/components/Form/TimeSheetReader/hooks/useTimeSheet'
 import { convertDecimalToHour } from '@/utils/hourConverter'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 import { DynamicContent, Margins, PageSize } from 'pdfmake/interfaces'
-import { Technician } from '../../service-department/technicians/useTechnicians'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 export default function PDFPayrollReader(
-  technicianData: Technician,
+  technician: TechnicianResponse,
   timeSheetData: TimeSheetData,
-  fileData,
 ) {
   function pdfFooter(currentPage: number, pageCount: number) {
     return [
@@ -25,12 +26,6 @@ export default function PDFPayrollReader(
       },
     ]
   }
-
-  const totalOfExpenses = fileData
-    .reduce((total, currentValue) => {
-      return total + currentValue.amount
-    }, 0)
-    .toFixed(2)
 
   const normalTotalHours =
     (timeSheetData?.normal_hours_range_A +
@@ -59,7 +54,7 @@ export default function PDFPayrollReader(
         alignment: 'justify',
         columns: [
           {
-            text: 'FATURA FECHADA RESUMO',
+            text: 'FOLHA FECHADA RESUMO',
             fontSize: 18,
             bold: true,
             color: 'red',
@@ -82,16 +77,7 @@ export default function PDFPayrollReader(
         alignment: 'justify',
         columns: [
           { text: 'TÉCNICO:', style: 'content' },
-          { text: technicianData?.name, style: 'italic' },
-          { text: '', style: 'content' },
-          { text: '', style: 'content' },
-        ],
-      },
-      {
-        alignment: 'justify',
-        columns: [
-          { text: 'Cargo:', style: 'content' },
-          { text: technicianData?.job_title, style: 'italic' },
+          { text: technician?.name, style: 'italic' },
           { text: '', style: 'content' },
           { text: '', style: 'content' },
         ],
@@ -155,15 +141,6 @@ export default function PDFPayrollReader(
                 currency: 'BRL',
               })}`,
             ],
-            [
-              `Despesas`,
-              ``,
-              ``,
-              `${totalOfExpenses.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}`,
-            ],
           ],
         },
       },
@@ -174,11 +151,7 @@ export default function PDFPayrollReader(
           body: [
             [
               'TOTAL:',
-              `${(
-                normalTotalHours +
-                extraTotalHours +
-                totalOfExpenses
-              ).toLocaleString('pt-BR', {
+              `${(normalTotalHours + extraTotalHours).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
               })}`,

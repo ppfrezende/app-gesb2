@@ -13,6 +13,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs
 export default function PDFReader(
   interventionData: InterventionResponse,
   timeSheetData: TimeSheetData,
+  fileData,
 ) {
   function pdfFooter(currentPage: number, pageCount: number) {
     return [
@@ -24,6 +25,14 @@ export default function PDFReader(
       },
     ]
   }
+
+  const totalExpenseAmount = parseFloat(
+    fileData
+      .reduce((accumulator, currentValue) => {
+        return accumulator + currentValue.amount
+      }, 0)
+      .toFixed(2),
+  )
 
   const valuePerTravelHour = (
     (interventionData?.isOffshore === true
@@ -276,6 +285,15 @@ export default function PDFReader(
                 currency: 'BRL',
               })}`,
             ],
+            [
+              `Despesas`,
+              `-`,
+              `-`,
+              `${totalExpenseAmount.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}`,
+            ],
           ],
         },
       },
@@ -287,7 +305,9 @@ export default function PDFReader(
             [
               'TOTAL:',
               `${(
-                totalNormalHourPartial + totalExtraHourPartial
+                totalNormalHourPartial +
+                totalExtraHourPartial +
+                totalExpenseAmount
               ).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -328,17 +348,6 @@ export default function PDFReader(
       },
     },
   }
-
-  console.log(
-    (interventionData?.isOffshore === true
-      ? interventionData?.purchaseOrder.factor_HE_offshore
-      : interventionData?.purchaseOrder.factor_HE_onshore) *
-      interventionData?.skill.normal_hour *
-      ((timeSheetData?.normal_hours_range_A +
-        timeSheetData?.normal_hours_range_B) *
-        24),
-  )
-  console.log(timeSheetData)
 
   pdfMake.createPdf(docDefinition).open()
 }

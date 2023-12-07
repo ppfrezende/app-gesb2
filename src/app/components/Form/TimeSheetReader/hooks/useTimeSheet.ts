@@ -69,7 +69,7 @@ export type GetTimeSheetResponse = {
   totalCount: number
 }
 
-type TechnicianResponse = {
+export type TechnicianResponse = {
   name: string
   email: string
 }
