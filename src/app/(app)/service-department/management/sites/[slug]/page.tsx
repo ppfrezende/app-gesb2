@@ -68,7 +68,7 @@ export default function SitePage({ params }: { params: { slug: string } }) {
 
           <Flex marginTop="2">
             <Text marginTop="1" fontSize="sm">
-              <strong>{data?.on_offshore ? 'Offshore' : 'Onshore'}</strong>
+              <strong>{data?.isOffshore ? 'Offshore' : 'Onshore'}</strong>
             </Text>
           </Flex>
 

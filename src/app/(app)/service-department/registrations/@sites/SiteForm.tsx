@@ -35,7 +35,7 @@ import { useState } from 'react'
 
 type SiteFormData = {
   description?: string
-  on_offshore?: boolean
+  isOffshore?: boolean
 }
 
 type FormProps = {
@@ -53,7 +53,7 @@ export function SiteForm({ site, siteId = '' }: FormProps) {
     mode: 'onBlur',
     defaultValues: {
       description: siteId ? site?.description : '',
-      on_offshore: siteId ? site?.on_offshore : false,
+      isOffshore: siteId ? site?.isOffshore : false,
     },
     resolver: yupResolver(siteId ? updateSiteFormSchema : createSiteFormSchema),
   })
@@ -61,11 +61,11 @@ export function SiteForm({ site, siteId = '' }: FormProps) {
   const { errors, isSubmitting } = formState
 
   const updateSite = useMutation(
-    async ({ description, on_offshore }: SiteFormData) => {
+    async ({ description, isOffshore }: SiteFormData) => {
       try {
         await api.put(`/sites/${siteId}`, {
           description,
-          on_offshore,
+          isOffshore,
         })
         closeModalandAddToast(siteId)
       } catch (err) {
@@ -177,11 +177,11 @@ export function SiteForm({ site, siteId = '' }: FormProps) {
               />
               <SwitchInput
                 onChange={() => setIsChecked(!isChecked)}
-                {...register('on_offshore')}
-                name="on_offshore"
+                {...register('isOffshore')}
+                name="isOffshore"
                 label="On/Offshore:"
-                isChecked={watch('on_offshore')}
-                error={errors.on_offshore}
+                isChecked={watch('isOffshore')}
+                error={errors.isOffshore}
               />
             </ModalBody>
 

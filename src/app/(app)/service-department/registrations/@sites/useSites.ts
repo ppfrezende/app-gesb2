@@ -3,7 +3,7 @@ import { api } from '@/services/apiClient'
 export type Site = {
   id: string
   description: string
-  on_offshore: boolean
+  isOffshore: boolean
   userName: string
   created_at: string
 }
@@ -26,7 +26,7 @@ export async function getSites(page: number): Promise<GetSitesResponse> {
     return {
       id: site.id,
       description: site.description,
-      on_offshore: site.on_offshore,
+      isOffshore: site.isOffshore,
       created_at: new Date(site.created_at).toLocaleDateString('pt-BR', {
         day: '2-digit',
         month: 'long',
@@ -48,7 +48,7 @@ export async function getSite(id: string): Promise<Site> {
   return {
     id: data.site.id,
     description: data.site.description,
-    on_offshore: data.site.on_offshore,
+    isOffshore: data.site.isOffshore,
     userName: data.site.userName,
     created_at: new Date(data.site.created_at).toLocaleDateString('pt-BR', {
       day: '2-digit',

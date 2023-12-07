@@ -60,7 +60,7 @@ export default function SitesTable() {
                     </Text>
                     <Text>
                       <strong>On/Offshore: </strong>
-                      {site.on_offshore ? 'Offshore' : 'Onshore'}
+                      {site.isOffshore ? 'Offshore' : 'Onshore'}
                     </Text>
                     <Text>
                       <strong>Data de criação: </strong>
@@ -72,7 +72,7 @@ export default function SitesTable() {
             </Td>
 
             <Td>
-              <Text>{site?.on_offshore ? 'Offshore' : 'Onshore'}</Text>
+              <Text>{site?.isOffshore ? 'Offshore' : 'Onshore'}</Text>
             </Td>
 
             <Td>

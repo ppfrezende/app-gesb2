@@ -305,6 +305,7 @@ export default function PDFReader(
             [
               'TOTAL:',
               `${(
+                totalTraveledHoursPartial +
                 totalNormalHourPartial +
                 totalExtraHourPartial +
                 totalExpenseAmount
