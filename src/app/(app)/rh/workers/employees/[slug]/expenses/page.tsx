@@ -52,9 +52,7 @@ export default function ExpensesList({ params }: { params: { slug: string } }) {
           />
 
           <Flex>
-            <Box marginRight="4">
-              <ExpenseReader />
-            </Box>
+            <Box marginRight="4">{/* <ExpenseReader /> */}</Box>
           </Flex>
         </Flex>
       </Box>
