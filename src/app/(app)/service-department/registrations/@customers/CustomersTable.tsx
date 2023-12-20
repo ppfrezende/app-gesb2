@@ -81,7 +81,7 @@ export default function CustomersTable() {
             <Td>
               <Button
                 as="a"
-                href={`/customers/${customer.id}`}
+                href={`management/customers/${customer.id}`}
                 size="sm"
                 fontSize="sm"
                 fontWeight="normal"

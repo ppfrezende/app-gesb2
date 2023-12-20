@@ -11,9 +11,16 @@ interface NavLinkProps extends ChakraLinkProps {
   icon: ElementType
   children: string
   href: string
+  isDisabled: boolean
 }
 
-export function NavLink({ icon, children, href, ...rest }: NavLinkProps) {
+export function NavLink({
+  icon,
+  children,
+  href,
+  isDisabled,
+  ...rest
+}: NavLinkProps) {
   return (
     <ActiveLink href={href} passHref>
       <ChakraLink
@@ -23,10 +30,13 @@ export function NavLink({ icon, children, href, ...rest }: NavLinkProps) {
         _hover={{
           bgColor: 'gray.200',
         }}
+        style={{ pointerEvents: isDisabled ? 'none' : 'auto' }}
         {...rest}
       >
-        <Icon as={icon} />
-        <Text marginLeft="2">{children}</Text>
+        <Icon color={isDisabled ? 'gray.300' : 'inherit'} as={icon} />
+        <Text marginLeft="2" color={isDisabled ? 'gray.300' : 'inherit'}>
+          {children}
+        </Text>
       </ChakraLink>
     </ActiveLink>
   )

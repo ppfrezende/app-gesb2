@@ -92,7 +92,7 @@ export default function PurchaseOrdersTable() {
             <Td>
               <Button
                 as="a"
-                href={`/purchase-orders/${purchase_order.id}`}
+                href={`management/purchase-orders/${purchase_order.id}`}
                 size="sm"
                 fontSize="sm"
                 fontWeight="normal"

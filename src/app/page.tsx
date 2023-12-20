@@ -26,7 +26,11 @@ interface SignInFormData {
 }
 
 const authenticateBodySchema = yup.object({
-  email: yup.string().required('O e-mail é obrigatório').email(),
+  email: yup
+    .string()
+    .required('O e-mail é obrigatório')
+    .email()
+    .typeError('O e-mail deve ser válido'),
   password: yup
     .string()
     .required('A senha é obrigatória')

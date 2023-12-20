@@ -1,3 +1,5 @@
+'use client'
+
 import { Divider, Stack, Text } from '@/app/components/chakraui'
 import { NavSection } from './NavSection'
 import { NavLink } from './NavLink'
@@ -11,15 +13,26 @@ import {
   RiMoneyDollarCircleLine,
   RiBarChart2Line,
 } from '@/app/components/icons'
+import { useContext } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
 
 export function SidebarNav() {
+  const { user } = useContext(AuthContext)
+  const userRole = user?.role
+
+  const isAdmin = userRole === 'ADMIN'
+
   return (
     <Stack spacing="8" align="flex-start">
       <NavSection>
-        <NavLink icon={RiHome8Line} href="/dashboard">
+        <NavLink isDisabled={false} icon={RiHome8Line} href="/dashboard">
           Dashboard
         </NavLink>
-        <NavLink icon={RiParentLine} href="/users">
+        <NavLink
+          isDisabled={!isAdmin && userRole !== 'ADMIN'}
+          icon={RiParentLine}
+          href="/users"
+        >
           Usuários
         </NavLink>
       </NavSection>
@@ -36,7 +49,12 @@ export function SidebarNav() {
         <Text marginBottom="-2" fontSize="lg" fontWeight="bold">
           RH
         </Text>
-        <NavLink marginLeft="2" icon={RiParentLine} href="/rh/registrations">
+        <NavLink
+          isDisabled={!isAdmin && userRole !== 'RH'}
+          marginLeft="2"
+          icon={RiParentLine}
+          href="/rh/registrations"
+        >
           Colaboradores
         </NavLink>
       </NavSection>
@@ -52,6 +70,7 @@ export function SidebarNav() {
           SERVICE
         </Text>
         <NavLink
+          isDisabled={!isAdmin && userRole !== 'SERVICE'}
           marginLeft="2"
           icon={RiCompasses2Line}
           href="/service-department/interventions"
@@ -59,6 +78,7 @@ export function SidebarNav() {
           Intervenções
         </NavLink>
         <NavLink
+          isDisabled={!isAdmin && userRole !== 'SERVICE'}
           marginLeft="2"
           icon={RiProfileLine}
           href="/service-department/registrations"
@@ -66,13 +86,19 @@ export function SidebarNav() {
           Cadastros
         </NavLink>
         <NavLink
+          isDisabled={!isAdmin && userRole !== 'SERVICE'}
           marginLeft="2"
           icon={RiParentLine}
           href="/service-department/technicians"
         >
           Técnicos
         </NavLink>
-        <NavLink marginLeft="2" icon={RiFileExcel2Line} href="/timesheets">
+        <NavLink
+          isDisabled={!isAdmin && userRole !== 'SERVICE'}
+          marginLeft="2"
+          icon={RiFileExcel2Line}
+          href="/timesheets"
+        >
           TimeSheets
         </NavLink>
       </NavSection>
@@ -88,6 +114,7 @@ export function SidebarNav() {
           FINANCEIRO
         </Text>
         <NavLink
+          isDisabled={!isAdmin && userRole !== 'FINANCE'}
           marginLeft="2"
           icon={RiBarChart2Line}
           href="/finance-department/consultives"
@@ -95,6 +122,7 @@ export function SidebarNav() {
           Consultivos
         </NavLink>
         <NavLink
+          isDisabled={!isAdmin && userRole !== 'FINANCE'}
           marginLeft="2"
           icon={RiMoneyDollarCircleLine}
           href="/finance-department/payroll"
